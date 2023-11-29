@@ -14,7 +14,7 @@ public class LooseCoin : MonoBehaviourPun {
     private AudioSource sfx;
     private Vector2 prevFrameVelocity;
     private float despawnTimer;
-
+    public Transform attractionTarget;
     public bool Collected { get; set; }
 
     public void Start() {
@@ -34,7 +34,6 @@ public class LooseCoin : MonoBehaviourPun {
             body.isKinematic = true;
             return;
         }
-
         bool inWall = Utils.IsAnyTileSolidBetweenWorldBox(body.position + hitbox.offset, hitbox.size * transform.lossyScale * 0.5f);
         gameObject.layer = inWall ? Layers.LayerHitsNothing : Layers.LayerLooseCoin;
 
@@ -51,6 +50,10 @@ public class LooseCoin : MonoBehaviourPun {
 
         spriteRenderer.enabled = !(despawnTimer > despawn-3 && despawnTimer % 0.3f >= 0.15f);
 
+        if(attractionTarget != null)
+        {
+            body.velocity = (attractionTarget.position - transform.position).normalized * 50;
+        }
         prevFrameVelocity = body.velocity;
 
         if ((despawnTimer += Time.deltaTime) >= despawn) {

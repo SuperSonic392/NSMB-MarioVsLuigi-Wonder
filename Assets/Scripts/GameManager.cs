@@ -17,6 +17,25 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IConnectionCallbacks, IMatchmakingCallbacks {
 
+    public PlayerController.wonderBadge reccomendedBadge;
+    public List<WonderEffect> PossibleEffects = new List<WonderEffect>();
+    public enum WonderEffect
+    {
+        None,
+        Metal,
+        Small,
+        Goomba,
+        Time,
+        Ghost,
+        AllSmall,
+        Slip,
+    }
+    [Tooltip("gives a 1 in __ chance of backfire")]
+    public int backfireChance = 10;
+    public PlayerController WonderOwner;
+    public WonderEffect currentWonderEffect = WonderEffect.None;
+    public float wonderTimer;
+    public bool WonderBackfire;
     private static GameManager _instance;
     public static GameManager Instance {
         get {
@@ -44,7 +63,9 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
     private TileBase[] originalTiles;
     private BoundsInt origin;
     private GameObject[] starSpawns;
+    private GameObject[] wonderSpawns;
     private readonly List<GameObject> remainingSpawns = new();
+    private readonly List<GameObject> remainingWonderSpawns = new();
     public int startServerTime, endServerTime = -1;
     public long startRealTime = -1, endRealTime = -1;
 
@@ -183,6 +204,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
             }
 
             StartCoroutine(BigStarRespawn());
+            StartCoroutine(WonderFlowerRespawn());
 
             if (!PhotonNetwork.IsMasterClient)
                 return;
@@ -442,6 +464,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
 
         //Star spawning
         starSpawns = GameObject.FindGameObjectsWithTag("StarSpawn");
+        wonderSpawns = GameObject.FindGameObjectsWithTag("WonderFlowerSpawn");
         Utils.GetCustomProperty(Enums.NetRoomProperties.StarRequirement, out starRequirement);
         Utils.GetCustomProperty(Enums.NetRoomProperties.CoinRequirement, out coinRequirement);
 
@@ -640,11 +663,76 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
             break;
         }
     }
+    private IEnumerator WonderFlowerRespawn(bool wait = true)
+    {
+        if (wait)
+            yield return new WaitForSeconds(10.4f - playerCount / 5f);
 
+        if (!PhotonNetwork.IsMasterClient || gameover)
+            yield break;
+
+        wonderwhile:
+        while (true)
+        {
+            if(FindObjectsOfType<WonderFlower>().Length > 0 || wonderTimer > 0)
+            {
+                yield return new WaitForSeconds(10.4f - playerCount / 5f);
+                goto wonderwhile;
+            }
+            if (remainingWonderSpawns.Count <= 0)
+                remainingWonderSpawns.AddRange(wonderSpawns);
+
+            int index = Random.Range(0, remainingWonderSpawns.Count);
+            Vector3 spawnPos = remainingWonderSpawns[index].transform.position;
+            //Check for people camping spawn
+            foreach (var hit in Physics2D.OverlapCircleAll(spawnPos, 4))
+            {
+                if (hit.gameObject.CompareTag("Player"))
+                {
+                    //cant spawn here
+                    remainingWonderSpawns.RemoveAt(index);
+                    yield return new WaitForSeconds(0.2f);
+                    goto wonderwhile;
+                }
+            }
+
+            PhotonNetwork.InstantiateRoomObject("Prefabs/WonderFlower", spawnPos, Quaternion.identity);           
+            remainingWonderSpawns.RemoveAt(index);
+            break;
+        }
+    }
+    public TMP_Text wonderTimerText;
     public void Update() {
         if (gameover)
             return;
-
+        if(currentWonderEffect == WonderEffect.Time)
+        {
+            if (WonderBackfire)
+            {
+                Time.timeScale = .75f;
+            }
+            else
+            {
+                Time.timeScale = 1.5f;
+            }
+        }
+        if(wonderTimer > 0 && currentWonderEffect != WonderEffect.None)
+        {
+            wonderTimerText.gameObject.SetActive(true);
+            wonderTimerText.text = Mathf.Ceil(wonderTimer).ToString();
+            wonderTimer -= Time.unscaledDeltaTime;
+            if (wonderTimer <= 0 )
+            {
+                currentWonderEffect = WonderEffect.None;
+                wonderTimerText.gameObject.SetActive(false);
+                Time.timeScale = 1;
+                foreach(PlayerGhost ghost in FindObjectsOfType<PlayerGhost>())
+                {
+                    Destroy(ghost.gameObject);
+                }
+            }
+        }
+        music.outputAudioMixerGroup.audioMixer.SetFloat("MasterPitch", Time.timeScale);
         if (endServerTime != -1) {
             float timeRemaining = (endServerTime - PhotonNetwork.ServerTimestamp) / 1000f;
 
@@ -920,6 +1008,11 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
         foreach (GameObject starSpawn in GameObject.FindGameObjectsWithTag("StarSpawn")) {
             Gizmos.DrawCube(starSpawn.transform.position, Vector3.one);
             Gizmos.DrawIcon(starSpawn.transform.position, "star", true, new Color(1, 1, 1, 0.5f));
+        }
+        Gizmos.color = new Color(0f, 0.25f, 1f, 0.5f);
+        foreach (GameObject starSpawn in GameObject.FindGameObjectsWithTag("WonderFlowerSpawn"))
+        {
+            Gizmos.DrawCube(starSpawn.transform.position, Vector3.one);
         }
     }
 

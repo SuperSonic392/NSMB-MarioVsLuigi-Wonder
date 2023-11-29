@@ -21,7 +21,7 @@ TextureImporter:
       213: -9005941153719796207
     second: host
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -43,7 +43,7 @@ TextureImporter:
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
   vTOnly: 0
-  ignoreMasterTextureLimit: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -83,6 +83,7 @@ TextureImporter:
   ignorePngGamma: 0
   applyGammaDecoding: 0
   swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -150,6 +151,18 @@ TextureImporter:
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 2
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Windows Store Apps
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -945,7 +958,7 @@ TextureImporter:
         width: 12
         height: 13
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -966,7 +979,7 @@ TextureImporter:
         width: 13
         height: 13
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -987,7 +1000,7 @@ TextureImporter:
         width: 5
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1008,7 +1021,7 @@ TextureImporter:
         width: 5
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1029,7 +1042,7 @@ TextureImporter:
         width: 5
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1050,7 +1063,7 @@ TextureImporter:
         width: 5
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1071,7 +1084,7 @@ TextureImporter:
         width: 5
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1092,7 +1105,7 @@ TextureImporter:
         width: 5
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1113,7 +1126,7 @@ TextureImporter:
         width: 5
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1134,7 +1147,7 @@ TextureImporter:
         width: 5
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1155,7 +1168,7 @@ TextureImporter:
         width: 5
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1176,7 +1189,7 @@ TextureImporter:
         width: 5
         height: 7
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -1184,6 +1197,69 @@ TextureImporter:
       bones: []
       spriteID: ba5df0829ffcea843b6b30ea1c50fb84
       internalID: -733638968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_48
+      rect:
+        serializedVersion: 2
+        x: 205
+        y: 49
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4164f8bc306eb4d44bd95949602c7457
+      internalID: 611213861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_49
+      rect:
+        serializedVersion: 2
+        x: 147
+        y: 10
+        width: 1
+        height: 1
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2fd30842e0d2d6945be273096a011dae
+      internalID: 287930347
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ui_50
+      rect:
+        serializedVersion: 2
+        x: 173
+        y: 54
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: cc8301c8a4efab64393e472f63e92b08
+      internalID: -1549366369
       vertices: []
       indices: 
       edges: []
@@ -1199,56 +1275,59 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      ui_13: 1989843761
-      ui_9: 1346584908
-      ui_4: -7975249404588759376
-      ui_12: -1355574207
-      ui_19: -140438321
-      ui_27: -1760457897
-      ui_44: 2001480390
-      ui_32: -695869007
-      ui_40: 1283854863
-      ui_33: -1247146109
-      ui_31: -2138142152
-      ui_38: 1109955768
-      ui_7: 268930356
-      ui_16: -1617229830
-      ui_23: -688806156
-      ui_28: 1081746599
-      ui_39: 918184948
-      ui_1: 3556181715638617739
-      ui_36: 1534273505
-      ui_11: -146918758
-      ui_14: 593802006
-      ui_45: 442522640
-      ui_35: -53618040
-      ui_46: -1616819778
+      host: -9005941153719796207
       ui_0: 5707218116961789024
-      ui_34: 1239800451
+      ui_1: 3556181715638617739
+      ui_10: -56961979
+      ui_11: -146918758
+      ui_12: -1355574207
+      ui_13: 1989843761
+      ui_14: 593802006
+      ui_15: -1455545889
+      ui_16: -1617229830
+      ui_17: -1187201629
+      ui_18: -1301614389
+      ui_19: -140438321
+      ui_2: -8816031292267695619
+      ui_20: -1713447182
       ui_21: -1972445275
       ui_22: 861810113
-      ui_3: 7263181891274304025
-      ui_43: 635142360
-      ui_6: -1683070159
-      ui_8: 1261997413
-      ui_29: -1525402044
-      ui_42: 1644416621
-      ui_41: 459308681
-      ui_2: -8816031292267695619
-      ui_5: 309482482
-      ui_37: -846454927
-      ui_20: -1713447182
-      ui_47: -733638968
-      ui_26: -878907871
-      ui_17: -1187201629
-      ui_10: -56961979
-      host: -9005941153719796207
-      ui_30: -1548187890
+      ui_23: -688806156
       ui_24: 1420784344
-      ui_15: -1455545889
-      ui_18: -1301614389
       ui_25: 286214285
-  spritePackingTag: 
+      ui_26: -878907871
+      ui_27: -1760457897
+      ui_28: 1081746599
+      ui_29: -1525402044
+      ui_3: 7263181891274304025
+      ui_30: -1548187890
+      ui_31: -2138142152
+      ui_32: -695869007
+      ui_33: -1247146109
+      ui_34: 1239800451
+      ui_35: -53618040
+      ui_36: 1534273505
+      ui_37: -846454927
+      ui_38: 1109955768
+      ui_39: 918184948
+      ui_4: -7975249404588759376
+      ui_40: 1283854863
+      ui_41: 459308681
+      ui_42: 1644416621
+      ui_43: 635142360
+      ui_44: 2001480390
+      ui_45: 442522640
+      ui_46: -1616819778
+      ui_47: -733638968
+      ui_48: 611213861
+      ui_49: 287930347
+      ui_5: 309482482
+      ui_50: -1549366369
+      ui_6: -1683070159
+      ui_7: 268930356
+      ui_8: 1261997413
+      ui_9: 1346584908
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
   assetBundleName: 

@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using Photon.Realtime;
 using Discord;
+using NSMB.Utils;
 
 public class DiscordController : MonoBehaviour {
 
@@ -16,7 +17,7 @@ public class DiscordController : MonoBehaviour {
         return;
 #endif
 
-        discord = new Discord.Discord(962073502469459999, (ulong) CreateFlags.NoRequireDiscord);
+        discord = new Discord.Discord(1176696192206381197, (ulong) CreateFlags.NoRequireDiscord);
         activityManager = discord.GetActivityManager();
         activityManager.OnActivityJoinRequest += AskToJoin;
         activityManager.OnActivityJoin += TryJoinGame;
@@ -93,7 +94,14 @@ public class DiscordController : MonoBehaviour {
             else
                 assets.LargeImage = "mainmenu";
             assets.LargeText = gm.levelName;
-
+            if (FindObjectOfType<BadgeManager>())
+            {
+                if (FindObjectOfType<BadgeManager>().badge != PlayerController.wonderBadge.None)
+                {
+                    assets.SmallImage = "badge";
+                    assets.SmallText = Utils.GetBadgeNames(FindObjectOfType<BadgeManager>().badge);
+                }
+            }
             activity.Assets = assets;
 
             if (gm.timedGameDuration == -1) {

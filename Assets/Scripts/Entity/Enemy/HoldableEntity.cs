@@ -31,6 +31,9 @@ public abstract class HoldableEntity : KillableEntity {
     public abstract void Throw(bool facingLeft, bool crouching, Vector2 pos);
 
     [PunRPC]
+    public abstract void Toss(bool facingLeft, bool crouching, Vector2 pos);
+
+    [PunRPC]
     public virtual void Pickup(int view) {
         if (holder)
             return;

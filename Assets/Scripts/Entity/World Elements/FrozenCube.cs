@@ -290,6 +290,33 @@ public class FrozenCube : HoldableEntity {
 
         body.velocity = new(throwSpeed * (left ? -1 : 1), Mathf.Min(0, body.velocity.y));
     }
+    public override void Toss(bool facingLeft, bool crouch, Vector2 pos)
+    {
+        if (holder == null)
+            return;
+
+        fallen = false;
+        flying = false;
+        left = facingLeft;
+        fastSlide = true;
+        body.position = new(pos.x + (holder.facingRight ? 0.1f : -0.1f), pos.y);
+
+        previousHolder = holder;
+        holder.SetHoldingOld(photonView.ViewID);
+        holder = null;
+        throwTimer = 1f;
+
+        photonView.TransferOwnership(PhotonNetwork.MasterClient);
+
+        if (entity.IsFlying)
+        {
+            fallen = true;
+            body.isKinematic = false;
+        }
+        ApplyConstraints();
+
+        body.velocity = new(throwSpeed * (left ? -1 : 1), Mathf.Min(0, body.velocity.y));
+    }
 
     [PunRPC]
     public override void Kick(bool fromLeft, float kickFactor, bool groundpound) {

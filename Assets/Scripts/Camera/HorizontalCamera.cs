@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class HorizontalCamera : MonoBehaviour {
     public static float OFFSET_TARGET = 0f;
     public static float OFFSET_VELOCITY, OFFSET = 0f;
+    public float sizeMul = 1f;
     private Camera ourCamera;
     
     public bool renderToTextureIfAvailable = true;
@@ -22,6 +23,11 @@ public class HorizontalCamera : MonoBehaviour {
         ourCamera.targetTexture = renderToTextureIfAvailable && Settings.Instance.ndsResolution && SceneManager.GetActiveScene().buildIndex != 0 
             ? GlobalController.Instance.ndsTexture 
             : null;
+        ourCamera.orthographicSize = ourCamera.orthographicSize * sizeMul;
+        if (Settings.Instance.ndsResolution)
+        {
+            ourCamera.orthographicSize = 3.5f;
+        }
     }
 
     private void AdjustCamera() {
@@ -30,6 +36,6 @@ public class HorizontalCamera : MonoBehaviour {
         // double size = orthographicSize;
         // Credit: https://forum.unity.com/threads/how-to-calculate-horizontal-field-of-view.16114/#post-2961964
         double aspectReciprocals = 1d / aspect;
-        ourCamera.orthographicSize = Mathf.Min((float) size, (float) (size * (16d/9d) * aspectReciprocals));
+        ourCamera.orthographicSize = Mathf.Min((float) size, (float) (size * (16d/9d) * aspectReciprocals)) * sizeMul;
     }
 }

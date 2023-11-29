@@ -282,6 +282,7 @@ public class KoopaWalk : HoldableEntity {
         stationary = crouch;
         currentSpeed = kickSpeed + 1.5f * (Mathf.Abs(holder.body.velocity.x) / holder.RunningMaxSpeed);
         body.position = pos;
+        PlaySound(Enums.Sounds.Enemy_Shell_Kick);
 
         Debug.DrawLine(body.position + hitbox.offset - hitbox.size / 2f, body.position + hitbox.offset + hitbox.size / 2f, Color.white, 10f);
         if (Utils.IsAnyTileSolidBetweenWorldBox(body.position + hitbox.offset, hitbox.size))
@@ -298,6 +299,30 @@ public class KoopaWalk : HoldableEntity {
         } else {
             body.velocity = new Vector2(currentSpeed * (facingLeft ? -1 : 1), body.velocity.y);
         }
+    }
+    [PunRPC]
+    public override void Toss(bool facingLeft, bool crouch, Vector2 pos)
+    {
+        Debug.Log("TOSS!");
+        if (holder == null)
+            return;
+        wakeupTimer = wakeup;
+        stationary = crouch;
+        currentSpeed = kickSpeed + 1.5f * (Mathf.Abs(holder.body.velocity.x) / holder.RunningMaxSpeed);
+        body.position = pos;
+        PlaySound(Enums.Sounds.Enemy_Shell_Kick); 
+
+        Debug.DrawLine(body.position + hitbox.offset - hitbox.size / 2f, body.position + hitbox.offset + hitbox.size / 2f, Color.white, 10f);
+        if (Utils.IsAnyTileSolidBetweenWorldBox(body.position + hitbox.offset, hitbox.size))
+            transform.position = body.position = new Vector2(holder.transform.position.x, transform.position.y);
+
+        previousHolder = holder;
+        holder = null;
+        shell = true;
+        photonView.TransferOwnership(PhotonNetwork.MasterClient);
+        left = facingLeft; 
+        body.velocity = new Vector2(2 * (facingLeft ? -1 : 1), 10);
+        putdown = true;
     }
     [PunRPC]
     public void WakeUp() {

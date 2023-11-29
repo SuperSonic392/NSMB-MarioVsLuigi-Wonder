@@ -10,7 +10,7 @@ using NSMB.Utils;
 public class UIUpdater : MonoBehaviour {
 
     public static UIUpdater Instance;
-    public GameObject playerTrackTemplate, starTrackTemplate;
+    public GameObject playerTrackTemplate, starTrackTemplate, flowerTrackTemplate;
     public PlayerController player;
     public Sprite storedItemNull;
     public TMP_Text uiStars, uiCoins, uiDebug, uiLives, uiCountdown;
@@ -134,6 +134,16 @@ public class UIUpdater : MonoBehaviour {
         GameObject trackObject = Instantiate(playerTrackTemplate, playerTrackTemplate.transform.parent);
         TrackIcon icon = trackObject.GetComponent<TrackIcon>();
         icon.target = player.gameObject;
+
+        trackObject.SetActive(true);
+
+        return trackObject;
+    }
+    public GameObject CreateFlowerIcon(GameObject target)
+    {
+        GameObject trackObject = Instantiate(flowerTrackTemplate, flowerTrackTemplate.transform.parent);
+        TrackIcon icon = trackObject.GetComponent<TrackIcon>();
+        icon.target = target;
 
         trackObject.SetActive(true);
 

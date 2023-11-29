@@ -6,19 +6,19 @@ using NSMB.Utils;
 public class BreakableBrickTile : InteractableTile {
     [ColorUsage(false)]
     public Color particleColor;
-    public bool breakableBySmallMario = false, breakableByLargeMario = true, breakableByGiantMario = true, breakableByShells = true, breakableByBombs = true, bumpIfNotBroken = true, bumpIfBroken = true;
+    public bool breakableBySmallMario = false, breakableByLargeMario = true, breakableByGiantMario = true, breakableByShells = true, breakableByBombs = true, bumpIfNotBroken = true, bumpIfBroken = true, iceSkidding = false;
     protected bool BreakBlockCheck(MonoBehaviour interacter, InteractionDirection direction, Vector3 worldLocation) {
         bool doBump = false, doBreak = false, giantBreak = false;
         if (interacter is PlayerController pl) {
             if (pl.state <= Enums.PowerupState.Small && !pl.drill) {
-                doBreak = breakableBySmallMario;
+                doBreak = breakableBySmallMario || pl.big;
                 doBump = true;
             } else if (pl.state == Enums.PowerupState.MegaMushroom) {
-                doBreak = breakableByGiantMario;
+                doBreak = breakableByGiantMario || pl.big;
                 giantBreak = true;
                 doBump = false;
             } else if (pl.state >= Enums.PowerupState.Mushroom || pl.drill) {
-                doBreak = breakableByLargeMario;
+                doBreak = breakableByLargeMario || pl.big;
                 doBump = true;
             }
 

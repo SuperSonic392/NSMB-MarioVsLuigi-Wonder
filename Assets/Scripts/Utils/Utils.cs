@@ -10,6 +10,73 @@ using Photon.Realtime;
 namespace NSMB.Utils {
     public class Utils {
 
+        public static string GetBadgeNames(PlayerController.wonderBadge badge)
+        {
+            string ret = string.Empty;
+
+            switch (badge)
+            {
+                case PlayerController.wonderBadge.None:
+                    ret = "None";
+                    break;
+                case PlayerController.wonderBadge.ParachuteCap:
+                    ret = "Parachute Cap";
+                    break;
+                case PlayerController.wonderBadge.HighJump:
+                    ret = "Floating High Jump";
+                    break;
+                case PlayerController.wonderBadge.SpinPlus:
+                    ret = "Boosting Spin Jump";
+                    break;
+                case PlayerController.wonderBadge.Climb:
+                    ret = "Wall-Climb Jump";
+                    break;
+                case PlayerController.wonderBadge.SMB2:
+                    ret = "Crouching High Jump";
+                    break;
+                case PlayerController.wonderBadge.timedJump:
+                    ret = "Timed High Jump";
+                    break;
+                case PlayerController.wonderBadge.SuperMushroom:
+                    ret = "Auto Super Mushroom";
+                    break;
+                case PlayerController.wonderBadge.JetRun:
+                    ret = "Jet Run";
+                    break;
+                case PlayerController.wonderBadge.Invis:
+                    ret = "Invisibility";
+                    break;
+                case PlayerController.wonderBadge.Magnet:
+                    ret = "Coin Magnet";
+                    break;
+                case PlayerController.wonderBadge.AllFireFlower:
+                    ret = "All Fire Power";
+                    break;
+                case PlayerController.wonderBadge.AllIceFlower:
+                    ret = "All Ice Power";
+                    break;
+                case PlayerController.wonderBadge.AllPropellerMushroom:
+                    ret = "All Propeller Power";
+                    break;
+                case PlayerController.wonderBadge.AllBlueShell:
+                    ret = "All Shell Power";
+                    break;
+                case PlayerController.wonderBadge.AllMiniMushroom:
+                    ret = "All Mini Power";
+                    break;
+                case PlayerController.wonderBadge.Random:
+                    ret = "Random";
+                    break;
+                case PlayerController.wonderBadge.PrinceChoice:
+                    ret = "Automatic Choice";
+                    break;
+                default:
+                    ret = "Unknown";
+                    break;
+            }
+            return ret;
+        }
+
         public static int FirstPlaceStars {
             get => GameManager.Instance.players.Where(pl => pl.lives != 0).Max(pc => pc.stars);
         }
@@ -575,6 +642,28 @@ namespace NSMB.Utils {
                 return new Color(0.9f, 0.9f, 0.9f, 0.7f);
 
             return Color.HSVToRGB(result / ((float) count + 1), s, v);
+        }
+        public static int GetPlayerBadge(Player player, float s = 1, float v = 1)
+        {
+
+            int result = -1;
+            int count = 0;
+            foreach (var pl in PhotonNetwork.PlayerList)
+            {
+                GetCustomProperty(Enums.NetPlayerProperties.Spectator, out bool spectating, pl.CustomProperties);
+                if (spectating)
+                    continue;
+
+                if (pl == player)
+                    result = count;
+
+                count++;
+            }
+
+            if (result == -1)
+                return 0;
+
+            return 0;
         }
 
         public static void TickTimer(ref float counter, float min, float delta, float max = float.MaxValue) {

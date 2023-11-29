@@ -224,7 +224,20 @@ public class BobombWalk : HoldableEntity {
         body.velocity = new(kickSpeed * (left ? -1 : 1), 3f);
         PlaySound(Enums.Sounds.Enemy_Shell_Kick);
     }
+    [PunRPC]
+    public override void Toss(bool facingLeft, bool crouch, Vector2 pos)
+    {
+        if (holder == null)
+            return;
 
+        body.position = pos;
+
+        previousHolder = holder;
+        holder = null;
+        photonView.TransferOwnership(PhotonNetwork.MasterClient);
+        left = facingLeft;
+        body.velocity = new Vector2(2 * (facingLeft ? -1 : 1), 15);
+    }
     [PunRPC]
     public void Turnaround(bool hitWallOnLeft) {
         left = !hitWallOnLeft;

@@ -6,11 +6,11 @@ using NSMB.Utils;
 
 public class PlayerAnimationController : MonoBehaviourPun {
 
-    [SerializeField] private Avatar smallAvatar, largeAvatar;
+    [SerializeField] private Avatar smallAvatar, largeAvatar, kuriboAvatar;
     [SerializeField] private ParticleSystem dust, sparkles, drillParticle, giantParticle, fireParticle;
-    [SerializeField] private GameObject models, smallModel, largeModel, largeShellExclude, blueShell, propellerHelmet, propeller;
+    [SerializeField] public GameObject models, smallModel, largeModel, kuriboModel, largeShellExclude, blueShell, propellerHelmet, propeller;
     [SerializeField] private Material glowMaterial;
-    [SerializeField] private Color primaryColor = Color.clear, secondaryColor = Color.clear;
+    [SerializeField] public Color primaryColor = Color.clear, secondaryColor = Color.clear;
     [SerializeField] [ColorUsage(true, false)] private Color? _glowColor = null;
     [SerializeField] private float blinkDuration = 0.1f, pipeDuration = 2f, deathUpTime = 0.6f, deathForce = 7f;
 
@@ -49,7 +49,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
         if (photonView) {
             enableGlow = !photonView.IsMine;
-            if (!photonView.IsMine)
+            if (!photonView.IsMine && controller.equipedBadge != PlayerController.wonderBadge.Invis)
                 GameManager.Instance.CreateNametag(controller);
 
             PlayerColorSet colorSet = GlobalController.Instance.skins[(int) photonView.Owner.CustomProperties[Enums.NetPlayerProperties.PlayerColor]];
@@ -58,13 +58,53 @@ public class PlayerAnimationController : MonoBehaviourPun {
             secondaryColor = colors.hatColor.linear;
         }
     }
-
+    public Transform HeadTransform;
     public void Update() {
+        if(controller.small && !controller.pipeEntering)
+        {
+            animator.speed = 2f;
+        }
+        else
+        {
+            if(controller.big && !controller.pipeEntering)
+            {
+                animator.speed = .5f;
+            }
+            else
+            {
+                animator.speed = 1.0f;
+            }
+        }
+        if(controller.space)
+        {
+            animator.speed /= 1.5f;
+        }
         HandleAnimations();
-
+        animator.SetBool("Bounce", controller.bounce);
+        animator.SetBool("A", controller.jumpHeld);
+        if (models.transform.rotation.eulerAngles.y < 180f)
+        {
+            models.transform.localScale = new Vector3(Mathf.Abs(models.transform.localScale.x), models.transform.localScale.y, models.transform.localScale.z);
+            if (HeadTransform)
+            {
+                HeadTransform.localScale = new Vector3(Mathf.Abs(HeadTransform.localScale.x), HeadTransform.localScale.y, HeadTransform.localScale.z);
+            }
+        }
+        else
+        {
+            models.transform.localScale = new Vector3(-Mathf.Abs(models.transform.localScale.x), models.transform.localScale.y, models.transform.localScale.z);
+            if (HeadTransform)
+            {
+                HeadTransform.localScale = new Vector3(-Mathf.Abs(HeadTransform.localScale.x), HeadTransform.localScale.y, HeadTransform.localScale.z);
+            }
+        }
         if (renderers.Count == 0) {
             renderers.AddRange(GetComponentsInChildren<MeshRenderer>(true));
             renderers.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>(true));
+        }
+        if(controller.equipedBadge == PlayerController.wonderBadge.Invis)
+        {
+            models.SetActive(false);
         }
     }
 
@@ -73,7 +113,9 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
         if (gameover)
             models.SetActive(true);
-
+        animator.SetFloat("Joystick", Mathf.Abs(Mathf.Round(controller.joystick.x)));
+        animator.SetFloat("JoyY", Mathf.Lerp(animator.GetFloat("JoyY"), Mathf.Round(controller.joystick.y), Time.deltaTime * 15));
+        animator.SetBool("Running", controller.running);
         Vector3 targetEuler = models.transform.eulerAngles;
         bool instant = false, changeFacing = false;
         if (!gameover && !controller.Frozen) {
@@ -82,13 +124,13 @@ public class PlayerAnimationController : MonoBehaviourPun {
                 instant = true;
             } else if (controller.dead) {
                 if (animator.GetBool("firedeath") && deathTimer > deathUpTime) {
-                    targetEuler = new Vector3(-15, controller.facingRight ? 110 : 250, 0);
+                    targetEuler = new Vector3(0, controller.facingRight ? 110 : 250, 0);
                 } else {
-                    targetEuler = new Vector3(0, 180, 0);
+                    targetEuler = new Vector3(0, controller.facingRight ? 110 : 250, 0);
                 }
                 instant = true;
             } else if (animator.GetBool("pipe")) {
-                targetEuler = new Vector3(0, 180, 0);
+                targetEuler = new Vector3(0, controller.facingRight ? 110 : 250, 0);
                 instant = true;
             } else if (animator.GetBool("inShell") && (!controller.onSpinner || Mathf.Abs(body.velocity.x) > 0.3f)) {
                 targetEuler += Mathf.Abs(body.velocity.x) / controller.RunningMaxSpeed * Time.deltaTime * new Vector3(0, 1800 * (controller.facingRight ? -1 : 1));
@@ -142,7 +184,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
         SetParticleEmission(fireParticle, !gameover && animator.GetBool("firedeath") && controller.dead && deathTimer > deathUpTime);
 
         //Blinking
-        if (controller.dead) {
+        if (controller.dead || (animator.GetCurrentAnimatorStateInfo(0).IsName("mini-falling") && !animator.IsInTransition(0))) {
             eyeState = Enums.PlayerEyeState.Death;
         } else {
             if ((blinkTimer -= Time.fixedDeltaTime) < 0)
@@ -176,7 +218,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
                 particle.Stop();
         }
     }
-
+    private float _Metallic;
     public void UpdateAnimatorStates() {
 
         bool right = controller.joystick.x > 0.35f;
@@ -212,6 +254,8 @@ public class PlayerAnimationController : MonoBehaviourPun {
             } else if (controller.onIce) {
                 animatedVelocity = 0;
             }
+            if(animatedVelocity > 0)
+            animatedVelocity = Mathf.Max(1f, animatedVelocity);
             animator.SetFloat("velocityX", animatedVelocity);
             animator.SetFloat("velocityY", body.velocity.y);
             animator.SetBool("doublejump", controller.doublejump);
@@ -248,6 +292,17 @@ public class PlayerAnimationController : MonoBehaviourPun {
                 _ => Vector3.one,
             };
         }
+        if (controller.small)
+        {
+            transform.localScale *= .5f;
+        }
+        else
+        {
+            if (controller.big)
+            {
+                transform.localScale *= 3f;
+            }
+        }
 
         //Shader effects
         if (materialBlock == null)
@@ -269,6 +324,23 @@ public class PlayerAnimationController : MonoBehaviourPun {
         //Customizeable player color
         materialBlock.SetVector("OverallsColor", primaryColor);
         materialBlock.SetVector("ShirtColor", secondaryColor);
+        if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && controller.wonderOwner)
+        {
+            _Metallic += Time.deltaTime;
+            if(_Metallic > 1)
+            {
+                _Metallic = 1;
+            }
+        }
+        else
+        {
+            _Metallic -= Time.deltaTime;
+            if (_Metallic < 0)
+            {
+                _Metallic = 0;
+            }
+        }
+        materialBlock.SetFloat("_Metallic", _Metallic);
 
         Vector3 giantMultiply = Vector3.one;
         if (controller.giantTimer > 0 && controller.giantTimer < 4) {
@@ -286,19 +358,45 @@ public class PlayerAnimationController : MonoBehaviourPun {
         //Model changing
         bool large = controller.state >= Enums.PowerupState.Mushroom;
 
-        largeModel.SetActive(large);
-        smallModel.SetActive(!large);
+        if (controller.goomba)
+        {
+            kuriboModel.SetActive(true);
+            largeModel.SetActive(false);
+            smallModel.SetActive(false);
+        }
+        else
+        {
+            kuriboModel.SetActive(false);
+            largeModel.SetActive(large);
+            smallModel.SetActive(!large);
+        }
+
         blueShell.SetActive(controller.state == Enums.PowerupState.BlueShell);
 
         largeShellExclude.SetActive(!animator.GetCurrentAnimatorStateInfo(0).IsName("in-shell"));
         propellerHelmet.SetActive(controller.state == Enums.PowerupState.PropellerMushroom);
-        animator.avatar = large ? largeAvatar : smallAvatar;
-        animator.runtimeAnimatorController = large ? controller.character.largeOverrides : controller.character.smallOverrides;
+        if (controller.goomba)
+        {
+            animator.avatar = kuriboAvatar;
+            animator.runtimeAnimatorController = controller.character.kuriboOverrides;
+        }
+        else
+        {
+            animator.avatar = large ? largeAvatar : smallAvatar;
+            animator.runtimeAnimatorController = large ? controller.character.largeOverrides : controller.character.smallOverrides;
+        }
 
         HandleDeathAnimation();
         HandlePipeAnimation();
-
+        if (!controller.pipeEntering)
+        {
+            animator.SetBool("PipeOut", false);
+        }
         transform.position = new(transform.position.x, transform.position.y, animator.GetBool("pipe") ? 1 : -4);
+        if (controller.small)
+        {
+            animator.SetFloat("velocityX", animator.GetFloat("velocityX") / 1.25f);
+        }
     }
     void HandleDeathAnimation() {
         if (!controller.dead) {
@@ -306,6 +404,29 @@ public class PlayerAnimationController : MonoBehaviourPun {
             return;
         }
 
+        if (controller.goomba)
+        {
+            animator.Play("deadstart");
+            if (deathTimer == 0)
+            {
+                body.velocity = new Vector2(controller.facingRight ? -3 : 3, 6);
+            }
+            deathTimer += Time.fixedDeltaTime;
+            body.gravityScale = 2f;
+            if (controller.photonView.IsMine && deathTimer + Time.fixedDeltaTime > (3 - 0.43f) && deathTimer < (3 - 0.43f))
+                controller.fadeOut.FadeOutAndIn(0.33f, .1f);
+
+            if (photonView.IsMine && deathTimer >= 3f)
+                photonView.RPC("PreRespawn", RpcTarget.All);
+
+            if (body.position.y < GameManager.Instance.GetLevelMinY() - transform.lossyScale.y)
+            {
+                models.SetActive(false);
+                body.velocity = Vector2.zero;
+                body.gravityScale = 0;
+            }
+            return;
+        }
         deathTimer += Time.fixedDeltaTime;
         if (deathTimer < deathUpTime) {
             deathUp = false;
@@ -349,21 +470,26 @@ public class PlayerAnimationController : MonoBehaviourPun {
         controller.UpdateHitbox();
 
         PipeManager pe = controller.pipeEntering;
-
+        if(pipeTimer == 0)
+            animator.SetBool("UpPipe", !pe.bottom);
         body.isKinematic = true;
-        body.velocity = controller.pipeDirection;
+        body.velocity = Vector2.zero;
 
         if (pipeTimer < pipeDuration / 2f && pipeTimer + Time.fixedDeltaTime >= pipeDuration / 2f) {
             //tp to other pipe
+            animator.SetTrigger("PipeOutUp");
+            animator.SetBool("PipeOut", true);
             if (pe.otherPipe.bottom == pe.bottom)
                 controller.pipeDirection *= -1;
+
+            animator.SetBool("UpPipe", !pe.otherPipe.bottom);
 
             Vector2 offset = controller.pipeDirection * (pipeDuration / 2f);
             if (pe.otherPipe.bottom) {
                 float size = controller.MainHitbox.size.y * transform.localScale.y;
                 offset.y += size;
             }
-            transform.position = body.position = new Vector3(pe.otherPipe.transform.position.x, pe.otherPipe.transform.position.y, 1) - (Vector3) offset;
+            transform.position = body.position = new Vector3(pe.otherPipe.transform.position.x, pe.otherPipe.transform.position.y, 1);
             photonView.RPC("PlaySound", RpcTarget.All, Enums.Sounds.Player_Sound_Powerdown);
             controller.cameraController.Recenter();
         }
@@ -377,6 +503,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             controller.alreadyGroundpounded = true;
             controller.pipeTimer = 0.25f;
             body.velocity = Vector2.zero;
+            transform.position = body.position = new Vector3(pe.otherPipe.transform.position.x, pe.otherPipe.transform.position.y, 1);
         }
         pipeTimer += Time.fixedDeltaTime;
     }

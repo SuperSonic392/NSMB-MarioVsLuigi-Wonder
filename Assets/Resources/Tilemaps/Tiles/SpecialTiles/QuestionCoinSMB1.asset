@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 768622ea6605f424793685c1aaec5076, type: 3}
+  m_Name: QuestionCoinSMB1
+  m_EditorClassIdentifier: 
+  m_AnimatedSprites:
+  - {fileID: -762372019, guid: a348dfb32dc621644bdeeae3c9603f62, type: 3}
+  - {fileID: 632776116, guid: a348dfb32dc621644bdeeae3c9603f62, type: 3}
+  - {fileID: 1013592742, guid: a348dfb32dc621644bdeeae3c9603f62, type: 3}
+  - {fileID: 632776116, guid: a348dfb32dc621644bdeeae3c9603f62, type: 3}
+  - {fileID: -762372019, guid: a348dfb32dc621644bdeeae3c9603f62, type: 3}
+  m_MinSpeed: 8
+  m_MaxSpeed: 8
+  m_AnimationStartTime: 0
+  m_AnimationStartFrame: 0
+  m_TileColliderType: 2
+  particleColor: {r: 0.9254902, g: 0.80784315, b: 0.39215687, a: 0}
+  breakableBySmallMario: 0
+  breakableByLargeMario: 0
+  breakableByGiantMario: 1
+  breakableByShells: 0
+  breakableByBombs: 1
+  bumpIfNotBroken: 0
+  bumpIfBroken: 0
+  resultTile: SpecialTiles/SMB1BlockEmpty
