@@ -68,7 +68,7 @@ public class PlayerGhost : MonoBehaviour
             me.Play(anims[0], 0);
             anims.RemoveAt(0);
         }
-        //last ditch effort to maintain
+        //last ditch effort to maintain order
         if(poss.Count >= delay)
         {
             poss.RemoveRange(delay, poss.Count - delay);

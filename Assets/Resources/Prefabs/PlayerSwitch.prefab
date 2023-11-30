@@ -9784,6 +9784,7 @@ MonoBehaviour:
   fadeOut: {fileID: 0}
   sfx: {fileID: 0}
   sfxBrick: {fileID: 0}
+  animator: {fileID: 0}
   body: {fileID: 0}
   onGround: 0
   previousOnGround: 0
@@ -25351,7 +25352,7 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 91a7ad60f28663947969aa1596647aa1,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5866666021909216657, guid: 91a7ad60f28663947969aa1596647aa1, type: 3}
@@ -25583,6 +25584,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: SwitchSmolman
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d8894dedba2e79b4cb9368ce01bccb51,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
