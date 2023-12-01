@@ -6,6 +6,7 @@ public class BackgroundLoop : MonoBehaviour {
     public static BackgroundLoop Instance { get; private set; }
 
     private GameObject[] children;
+    private float[] offsets;
     private Vector3[] truePositions, positionsAfterPixelSnap;
     private float[] ppus, halfWidths;
 
@@ -44,7 +45,7 @@ public class BackgroundLoop : MonoBehaviour {
     }
 
     public void LateUpdate() {
-        Reposition();
+        //Reposition(0);
     }
     #endregion
 

@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         AllPropellerMushroom, //added
         AllBlueShell, //added
         AllMiniMushroom, //added
+        GoombaProtection, //added
         Random, //added
         PrinceChoice //added
     }
@@ -447,7 +448,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             small = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Small || GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.AllSmall;
             big = false;
         }
-        goomba = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Goomba && !wonderOwner;
+        goomba = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Goomba && !wonderOwner && equipedBadge != wonderBadge.GoombaProtection;
         if (!GameManager.Instance.musicEnabled) {
             models.SetActive(false);
             return;
@@ -844,8 +845,9 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         GameManager.Instance.currentWonderEffect = effect;
         GameManager.Instance.WonderBackfire = backfire;
         GameManager.Instance.wonderTimer = 30;
-        Destroy(GameObject.FindGameObjectWithTag("wonderflower").transform.parent.gameObject);
-        if(effect == GameManager.WonderEffect.Ghost)
+        GameObject.FindGameObjectWithTag("wonderflower").transform.parent.gameObject.GetComponent<WonderFlower>().CollectFlower();
+        photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Wonder_Flower_Collect);
+        if (effect == GameManager.WonderEffect.Ghost)
         {
             foreach(PlayerController con in FindObjectsOfType<PlayerController>())
             {
@@ -983,6 +985,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             if (twirlDelay > 0)
                 return;
             Spinning = false;
+            inShell = false;
             twirlDelay = 0.5f / animator.speed;
             twirlTimer = 0.25f / animator.speed;
             animator.SetTrigger("Twirl");
@@ -991,6 +994,9 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     }
     public void SpinJump()
     {
+        inShell = false;
+        groundpound = false;
+        crouching = false;
         flying = false;
         sliding = false;
         onGround = false;
@@ -2336,7 +2342,8 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             if (jump && wallJumpTimer <= 0) {
                 //perform walljump
                 float horiz = WALLJUMP_HSPEED;
-                if(equipedBadge == wonderBadge.Climb && !Climbed)
+                cameraController.SetLastFloor();
+                if (equipedBadge == wonderBadge.Climb && !Climbed)
                 {
                     horiz = 0;
                     Climbed = true;
@@ -2489,7 +2496,8 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             {
                 vel += .25f;
             }
-            { 
+            {
+                cameraController.SetLastFloor();
                 singlejump = true;
                 doublejump = false;
                 triplejump = false;
@@ -3584,7 +3592,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
     public bool CanTwirl()
     {
-        return !propeller && !knockback;
+        return !propeller && !knockback && !(groundpound && !onGround);
     }
     void OnDrawGizmos() {
         if (!body)

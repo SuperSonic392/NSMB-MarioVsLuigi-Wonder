@@ -13,7 +13,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
     [SerializeField] public Color primaryColor = Color.clear, secondaryColor = Color.clear;
     [SerializeField] [ColorUsage(true, false)] private Color? _glowColor = null;
     [SerializeField] private float blinkDuration = 0.1f, pipeDuration = 2f, deathUpTime = 0.6f, deathForce = 7f;
-
+    [SerializeField] private Transform[] unflip;
     private PlayerController controller;
     private Animator animator;
     private Rigidbody2D body;
@@ -85,17 +85,17 @@ public class PlayerAnimationController : MonoBehaviourPun {
         if (models.transform.rotation.eulerAngles.y < 180f)
         {
             models.transform.localScale = new Vector3(Mathf.Abs(models.transform.localScale.x), models.transform.localScale.y, models.transform.localScale.z);
-            if (HeadTransform)
+            foreach(Transform tran in unflip)
             {
-                HeadTransform.localScale = new Vector3(Mathf.Abs(HeadTransform.localScale.x), HeadTransform.localScale.y, HeadTransform.localScale.z);
+                tran.localScale = new Vector3(Mathf.Abs(tran.localScale.x), tran.localScale.y, tran.localScale.z);
             }
         }
         else
         {
             models.transform.localScale = new Vector3(-Mathf.Abs(models.transform.localScale.x), models.transform.localScale.y, models.transform.localScale.z);
-            if (HeadTransform)
+            foreach (Transform tran in unflip)
             {
-                HeadTransform.localScale = new Vector3(-Mathf.Abs(HeadTransform.localScale.x), HeadTransform.localScale.y, HeadTransform.localScale.z);
+                tran.localScale = new Vector3(-Mathf.Abs(tran.localScale.x), tran.localScale.y, tran.localScale.z);
             }
         }
         if (renderers.Count == 0) {
@@ -459,7 +459,10 @@ public class PlayerAnimationController : MonoBehaviourPun {
         }
     }
 
-    void HandlePipeAnimation() {
+    void HandlePipeAnimation()
+    {
+        if (controller.pipeEntering)
+            body.velocity = Vector2.zero;
         if (!photonView.IsMine)
             return;
         if (!controller.pipeEntering) {
@@ -473,7 +476,6 @@ public class PlayerAnimationController : MonoBehaviourPun {
         if(pipeTimer == 0)
             animator.SetBool("UpPipe", !pe.bottom);
         body.isKinematic = true;
-        body.velocity = Vector2.zero;
 
         if (pipeTimer < pipeDuration / 2f && pipeTimer + Time.fixedDeltaTime >= pipeDuration / 2f) {
             //tp to other pipe
@@ -490,6 +492,10 @@ public class PlayerAnimationController : MonoBehaviourPun {
                 offset.y += size;
             }
             transform.position = body.position = new Vector3(pe.otherPipe.transform.position.x, pe.otherPipe.transform.position.y, 1);
+            if(pe.otherPipe.bottom)
+            {
+                transform.position += Vector3.up * -controller.MainHitbox.size.y * transform.localScale.y;
+            }
             photonView.RPC("PlaySound", RpcTarget.All, Enums.Sounds.Player_Sound_Powerdown);
             controller.cameraController.Recenter();
         }
@@ -504,6 +510,10 @@ public class PlayerAnimationController : MonoBehaviourPun {
             controller.pipeTimer = 0.25f;
             body.velocity = Vector2.zero;
             transform.position = body.position = new Vector3(pe.otherPipe.transform.position.x, pe.otherPipe.transform.position.y, 1);
+            if (pe.otherPipe.bottom)
+            {
+                transform.position += Vector3.up * -controller.MainHitbox.size.y * transform.localScale.y;
+            }
         }
         pipeTimer += Time.fixedDeltaTime;
     }

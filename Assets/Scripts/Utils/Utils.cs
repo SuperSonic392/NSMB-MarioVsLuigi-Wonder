@@ -64,6 +64,9 @@ namespace NSMB.Utils {
                 case PlayerController.wonderBadge.AllMiniMushroom:
                     ret = "All Mini Power";
                     break;
+                case PlayerController.wonderBadge.GoombaProtection:
+                    ret = "Goomba Protection";
+                    break;
                 case PlayerController.wonderBadge.Random:
                     ret = "Random";
                     break;

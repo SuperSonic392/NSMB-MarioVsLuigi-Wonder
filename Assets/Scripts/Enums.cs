@@ -153,6 +153,9 @@ public static class Enums {
         [SoundData("world/star_nearby")]                        World_Star_Nearby = 75,
         [SoundData("world/star_spawn")]                         World_Star_Spawn = 76,
         [SoundData("world/water_splash")]                       World_Water_Splash = 77,
+
+        //Wonder Elements
+        [SoundData("wonder/flower/collect")]                    Wonder_Flower_Collect = 95,
     }
 
     #endregion
