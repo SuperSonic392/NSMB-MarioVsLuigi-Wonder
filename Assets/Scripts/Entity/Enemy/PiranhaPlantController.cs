@@ -62,6 +62,17 @@ public class PiranhaPlantController : KillableEntity {
             player.photonView.RPC("Powerdown", RpcTarget.All, false);
         }
     }
+    public override void InteractWithPlayerSpin(PlayerController player)
+    {
+        if (player.invincible > 0 || player.inShell || player.state == Enums.PowerupState.MegaMushroom)
+        {
+            photonView.RPC("Kill", RpcTarget.All);
+        }
+        else
+        {
+            player.photonView.RPC("Powerdown", RpcTarget.All, false);
+        }
+    }
 
     [PunRPC]
     public void Respawn() {

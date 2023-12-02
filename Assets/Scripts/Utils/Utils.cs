@@ -67,6 +67,9 @@ namespace NSMB.Utils {
                 case PlayerController.wonderBadge.GoombaProtection:
                     ret = "Goomba Protection";
                     break;
+                case PlayerController.wonderBadge.Lightweight:
+                    ret = "Lightweight Jump";
+                    break;
                 case PlayerController.wonderBadge.Random:
                     ret = "Random";
                     break;

@@ -75,4 +75,47 @@ public class SpinyWalk : KoopaWalk {
             }
         }
     }
+    public override void InteractWithPlayerSpin(PlayerController player)
+    {
+        if (player.Frozen)
+            return;
+
+        Vector2 damageDirection = (player.body.position - body.position).normalized;
+        bool attackedFromAbove = Vector2.Dot(damageDirection, Vector2.up) > 0.5f && !player.onGround;
+
+        if (!attackedFromAbove && player.state == Enums.PowerupState.BlueShell && player.crouching && !player.inShell)
+        {
+            photonView.RPC(nameof(SetLeft), RpcTarget.All, damageDirection.x > 0);
+        }
+        else if (player.invincible > 0 || player.inShell || player.sliding
+            || (player.groundpound && player.state != Enums.PowerupState.MiniMushroom && attackedFromAbove)
+            || player.state == Enums.PowerupState.MegaMushroom)
+        {
+            player.bounce = true;
+        }
+        else if (attackedFromAbove)
+        {
+            if (player.state == Enums.PowerupState.MiniMushroom)
+            {
+                if (player.groundpound)
+                {
+                    player.groundpound = false;
+                    player.bounce = true;
+                }
+                player.bounce = true;
+            }
+            else
+            {
+                player.bounce = true;
+                player.bounce = !player.groundpound;
+            }
+            player.photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Enemy_Spin_Deflect);
+            player.drill = false;
+        }
+        else if (player.hitInvincibilityCounter <= 0)
+        {
+            player.photonView.RPC(nameof(PlayerController.Powerdown), RpcTarget.All, false);
+            photonView.RPC(nameof(SetLeft), RpcTarget.All, damageDirection.x < 0);
+        }
+    }
 }

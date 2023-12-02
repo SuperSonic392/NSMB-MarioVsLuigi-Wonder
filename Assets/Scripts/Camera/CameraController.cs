@@ -82,6 +82,40 @@ public class CameraController : MonoBehaviour
             currentPosition.z = startingZ;
             return;
         }
+        float minY = GameManager.Instance.cameraMinY, heightY = GameManager.Instance.cameraHeightY;
+        float minX = GameManager.Instance.cameraMinX, maxX = GameManager.Instance.cameraMaxX;
+        float vOrtho = targetCamera.orthographicSize;
+        float xOrtho = vOrtho * targetCamera.aspect;
+        if (controller.pipeEntering)
+        {
+            offset = 0;
+            if (controller.pipeEntering.instant)
+            {
+                currentPosition = controller.transform.position;
+            }
+            else
+            {
+                currentPosition.x = Mathf.Lerp(currentPosition.x, transform.position.x, Time.deltaTime * 5);
+                currentPosition.y = Mathf.Lerp(currentPosition.y, transform.position.y, Time.deltaTime * 5);
+            }
+            currentPosition.z = startingZ;
+            SetLastFloor();
+            currentPosition.x = Mathf.Clamp(currentPosition.x, minX + xOrtho, maxX - xOrtho);
+            currentPosition.y = Mathf.Clamp(currentPosition.y, minY + vOrtho, heightY == 0 ? (minY + vOrtho) : (minY + heightY - vOrtho));
+            if (Utils.WrapWorldLocation(ref playerPos))
+            {
+                Debug.Log("loop");
+                float xDifference = Vector2.Distance(Vector2.right * currentPosition.x, Vector2.right * playerPos.x);
+                bool right = currentPosition.x > playerPos.x;
+                if (xDifference >= 8)
+                {
+                    currentPosition.x += (right ? -1 : 1) * GameManager.Instance.levelWidthTile / 2f;
+                    if (IsControllingCamera)
+                        BackgroundLoop.Instance.wrap = true;
+                }
+            }
+            return;
+        }
         offset += controller.body.velocity.x * Time.deltaTime / 5;
         offset = Mathf.Clamp(offset, -.25f, .25f);
         currentPosition.x = controller.transform.position.x + offset;
@@ -89,11 +123,6 @@ public class CameraController : MonoBehaviour
         {
             SetLastFloor();
         }
-        currentPosition.z = startingZ;
-        float minY = GameManager.Instance.cameraMinY, heightY = GameManager.Instance.cameraHeightY;
-        float minX = GameManager.Instance.cameraMinX, maxX = GameManager.Instance.cameraMaxX;
-        float vOrtho = targetCamera.orthographicSize;
-        float xOrtho = vOrtho * targetCamera.aspect;
         if (controller.transform.position.y < currentPosition.y - vOrtho + 2)
         {
             lastFloor = controller.transform.position.y + vOrtho - 2;
@@ -119,8 +148,9 @@ public class CameraController : MonoBehaviour
         currentPosition.y = Mathf.Lerp(currentPosition.y, lastFloor, Time.deltaTime * 3);
         currentPosition.x = Mathf.Clamp(currentPosition.x, minX + xOrtho, maxX - xOrtho);
         currentPosition.y = Mathf.Clamp(currentPosition.y, minY + vOrtho, heightY == 0 ? (minY + vOrtho) : (minY + heightY - vOrtho));
-        
-        if(Utils.WrapWorldLocation(ref playerPos))
+
+        currentPosition.z = startingZ;
+        if (Utils.WrapWorldLocation(ref playerPos))
         {
             Debug.Log("loop");
             float xDifference = Vector2.Distance(Vector2.right * currentPosition.x, Vector2.right * playerPos.x);

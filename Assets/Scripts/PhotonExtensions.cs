@@ -8,7 +8,7 @@ using Photon.Realtime;
 public static class PhotonExtensions {
 
     private static readonly Dictionary<string, string> SPECIAL_PLAYERS = new() {
-        ["cf03abdb5d2ef1b6f0d30ae40303936f9ab22f387f8a1072e2849c8292470af1"] = "ipodtouch0218",
+        ["cf03abdb5d2ef1b6f0d30ae40303936f9ab22f387f8a1072e2849c8292470af1"] = "ipodtouch0218", //please join my mod so i can update this
         ["d5ba21667a5da00967cc5ebd64c0d648e554fb671637adb3d22a688157d39bf6"] = "mindnomad",
         ["95962949aacdbb42a6123732dabe9c7200ded59d7eeb39c889067bafeebecc72"] = "MPS64",
         ["7e9c6f2eaf0ce11098c8a90fcd9d48b13017667e33d09d0cc5dfe924f3ead6c1"] = "Fawndue",
@@ -20,6 +20,7 @@ public static class PhotonExtensions {
         ["cb989156b44e8885d203f12ecb75f7de0d6607835d2dc19b189fd660efe4526a"] = "FBEthePoS", 
         ["8f0fc456c10b08d93a21e60d4487709cc8415ef27c140a3d74c734f884013e1d"] = "vic", 
         ["fba5ff7e2b53b8b6135f498e5e6f3d3d34491702a4ec2b520aba7930156bb08c"] = "Cubby", 
+        ["26aa0abe8729eb88cb172d21bcce44796dbb8951091b1458bb7c44f859a5cc9b"] = "FrostyCake", 
     };
 
     public static bool IsMineOrLocal(this PhotonView view) {

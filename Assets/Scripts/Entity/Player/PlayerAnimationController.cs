@@ -474,30 +474,59 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
         PipeManager pe = controller.pipeEntering;
         if(pipeTimer == 0)
+        {
             animator.SetBool("UpPipe", !pe.bottom);
+            animator.SetBool("pipeSide", pe.right || pe.left);
+            if (pe.right)
+            {
+                transform.position = body.position = new Vector3(pe.transform.position.x, pe.transform.position.y, 1);
+                transform.position += Vector3.up * -.5f;
+                transform.position += Vector3.left * controller.MainHitbox.size.x * (transform.localScale.x - .5f);
+            }
+            if (pe.left)
+            {
+                transform.position = body.position = new Vector3(pe.transform.position.x, pe.transform.position.y, 1);
+                transform.position += Vector3.up * -.5f;
+                transform.position += Vector3.right * controller.MainHitbox.size.x * (transform.localScale.x - .5f);
+            }
+        }
         body.isKinematic = true;
 
         if (pipeTimer < pipeDuration / 2f && pipeTimer + Time.fixedDeltaTime >= pipeDuration / 2f) {
             //tp to other pipe
             animator.SetTrigger("PipeOutUp");
             animator.SetBool("PipeOut", true);
+            animator.SetBool("pipeSide", pe.otherPipe.right || pe.otherPipe.left);
             if (pe.otherPipe.bottom == pe.bottom)
                 controller.pipeDirection *= -1;
 
             animator.SetBool("UpPipe", !pe.otherPipe.bottom);
 
             Vector2 offset = controller.pipeDirection * (pipeDuration / 2f);
-            if (pe.otherPipe.bottom) {
+            if (pe.otherPipe.bottom && !pe.otherPipe.left && !pe.otherPipe.right) {
                 float size = controller.MainHitbox.size.y * transform.localScale.y;
                 offset.y += size;
             }
             transform.position = body.position = new Vector3(pe.otherPipe.transform.position.x, pe.otherPipe.transform.position.y, 1);
-            if(pe.otherPipe.bottom)
+            if(pe.otherPipe.bottom && !pe.otherPipe.left && !pe.otherPipe.right)
             {
                 transform.position += Vector3.up * -controller.MainHitbox.size.y * transform.localScale.y;
             }
+            if (pe.otherPipe.left)
+            {
+                controller.cameraController.offset = .5f;
+                transform.position += Vector3.up * -.5f;
+                transform.position += Vector3.right * controller.MainHitbox.size.x * (transform.localScale.x - .5f);
+                controller.facingRight = true;
+            }
+            if (pe.otherPipe.right)
+            {
+                controller.cameraController.offset = -.5f;
+                transform.position += Vector3.up * -.5f;
+                transform.position += Vector3.left * controller.MainHitbox.size.x * (transform.localScale.x - .5f);
+                controller.facingRight = false;
+            }
             photonView.RPC("PlaySound", RpcTarget.All, Enums.Sounds.Player_Sound_Powerdown);
-            controller.cameraController.Recenter();
         }
         if (pipeTimer >= pipeDuration) {
             controller.pipeEntering = null;
@@ -510,10 +539,21 @@ public class PlayerAnimationController : MonoBehaviourPun {
             controller.pipeTimer = 0.25f;
             body.velocity = Vector2.zero;
             transform.position = body.position = new Vector3(pe.otherPipe.transform.position.x, pe.otherPipe.transform.position.y, 1);
-            if (pe.otherPipe.bottom)
+            if (pe.otherPipe.bottom && !pe.otherPipe.left && !pe.otherPipe.right)
             {
                 transform.position += Vector3.up * -controller.MainHitbox.size.y * transform.localScale.y;
             }
+            if (pe.otherPipe.left)
+            {
+                transform.position += Vector3.up * -.5f;
+                transform.position += Vector3.right * controller.MainHitbox.size.x * (transform.localScale.x - .5f);
+            }
+            if (pe.otherPipe.right)
+            {
+                transform.position += Vector3.up * -.5f;
+                transform.position += Vector3.left * controller.MainHitbox.size.x * (transform.localScale.x - .5f);
+            }
+            animator.SetBool("pipeSide", false);
         }
         pipeTimer += Time.fixedDeltaTime;
     }

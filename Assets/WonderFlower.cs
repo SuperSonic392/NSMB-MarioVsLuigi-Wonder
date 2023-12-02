@@ -45,6 +45,6 @@ public class WonderFlower : MonoBehaviourPun
         box.enabled = false;
         anim.SetTrigger("get");
         collected = true;
-        collectTimer = 2.217f;
+        collectTimer = 1f;
     }
 }

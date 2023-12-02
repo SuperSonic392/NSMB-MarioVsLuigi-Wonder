@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         AllBlueShell, //added
         AllMiniMushroom, //added
         GoombaProtection, //added
+        Lightweight, //added
         Random, //added
         PrinceChoice //added
     }
@@ -125,7 +126,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
     //Walljumping variables
     private float wallSlideTimer, wallJumpTimer;
-    public bool wallSlideLeft, wallSlideRight;
+    public bool wallSlideLeft, wallSlideRight, wallJumpLeft, wallJumpRight;
 
     private int _starCombo;
     public int StarCombo {
@@ -182,7 +183,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         SerializationUtils.PackToShort(out short flags, running, jumpHeld, crouching, groundpound,
                 facingRight, onGround, knockback, flying, drill, sliding, skidding, wallSlideLeft,
                 wallSlideRight, invincible > 0, propellerSpinTimer > 0, wallJumpTimer > 0, Spinning);
-        SerializationUtils.PackToByte(out byte flags2, turnaround, propeller);
+        SerializationUtils.PackToByte(out byte flags2, turnaround, propeller, body.isKinematic);
         bool updateFlags = flags != previousFlags || flags2 != previousFlags2;
 
         bool forceResend = PhotonNetwork.Time - lastSendTimestamp > RESEND_RATE;
@@ -225,6 +226,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         propellerSpinTimer = flags[14] ? 1 : 0;
         wallJumpTimer = flags[15] ? 1 : 0;
         Spinning = flags[16];
+        body.isKinematic = flags[17];
 
         SerializationUtils.UnpackFromByte(buffer, ref index, out bool[] flags2);
         turnaround = flags2[0];
@@ -296,12 +298,12 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     public void Start() {
         space = FindObjectOfType<space>() != null;
         if(FindObjectOfType<BadgeManager>() != null)
-        {
+        { 
             if (photonView.IsMine)
             {
                 if(FindObjectOfType<BadgeManager>().badge == wonderBadge.Random)
                 {
-                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, Random.Range(1, 12), photonView.ViewID);
+                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, Random.Range(1, (int)wonderBadge.Random - 1), photonView.ViewID);
                 }
                 else
                 {
@@ -435,7 +437,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         }
         if (wonderOwner)
         {
-            big = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Small && GameManager.Instance.currentWonderEffect != GameManager.WonderEffect.AllSmall;
+            big = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Small && GameManager.Instance.currentWonderEffect != GameManager.WonderEffect.AllSmall && GameManager.Instance.spawnBigPowerups;
             small = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.AllSmall;
             if (state == Enums.PowerupState.MegaMushroom)
             {
@@ -489,7 +491,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         {
             body.gravityScale *= .5f;
         }
-        if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner)
+        if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner && equipedBadge != wonderBadge.Lightweight)
         {
             body.gravityScale *= 2f;
         }
@@ -774,7 +776,14 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             }
             else
             {
-                killable.InteractWithPlayer(this);
+                if (Spinning)
+                {
+                    killable.InteractWithPlayerSpin(this);
+                }
+                else
+                {
+                    killable.InteractWithPlayer(this);
+                }
             }
             return;
         }
@@ -982,14 +991,17 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                 SpinJump();
                 return;
             }
+            if (flying)
+                return;
             if (twirlDelay > 0)
                 return;
             Spinning = false;
+            sliding = false;
             inShell = false;
             twirlDelay = 0.5f / animator.speed;
             twirlTimer = 0.25f / animator.speed;
             animator.SetTrigger("Twirl");
-            photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Sound_GroundpoundStart);
+            photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Sound_Twirl);
         }
     }
     public void SpinJump()
@@ -1005,6 +1017,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         Spinning = true;
         doubleJumped = true;
         koyoteTime = 99; //screw you vik
+        photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Sound_Spinjump);
     }
     private void ActivatePowerupAction() {
         if (knockback || pipeEntering || GameManager.Instance.gameover || dead || Frozen || holding || goomba)
@@ -2187,7 +2200,94 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     }
 
     #region -- PIPES --
+    void RightPipeCheck()
+    {
+        if (!photonView.IsMine || joystick.x < analogDeadzone || state == Enums.PowerupState.MegaMushroom || !onGround || knockback || inShell)
+            return;
+        foreach (RaycastHit2D hit in Physics2D.RaycastAll(body.position, Vector2.right, .1f))
+        {
+            GameObject obj = hit.transform.gameObject;
+            if (!obj.CompareTag("pipe"))
+                continue;
+            PipeManager pipe = obj.GetComponent<PipeManager>();
+            if (big)
+            {
+                return;
+            }
+            if (pipe.miniOnly && (state != Enums.PowerupState.MiniMushroom && !small))
+            {
+                continue;
+            }
+            if (!pipe.right)
+            {
+                continue;
+            }
+            if (!pipe.entryAllowed)
+                continue;
 
+            //Enter pipe
+            pipeEntering = pipe;
+            Spinning = false;
+            pipeDirection = Vector2.right;
+
+            body.velocity = Vector2.right;
+            transform.position = body.position = new Vector2(obj.transform.position.x, transform.position.y);
+
+            photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Sound_Powerdown);
+            crouching = false;
+            sliding = false;
+            propeller = false;
+            drill = false;
+            usedPropellerThisJump = false;
+            groundpound = false;
+            inShell = false;
+            break;
+        }
+    }
+    void LeftPipeCheck()
+    {
+        if (!photonView.IsMine || joystick.x > -analogDeadzone || state == Enums.PowerupState.MegaMushroom || !onGround || knockback || inShell)
+            return;
+        foreach (RaycastHit2D hit in Physics2D.RaycastAll(body.position, Vector2.left, .1f))
+        {
+            GameObject obj = hit.transform.gameObject;
+            if (!obj.CompareTag("pipe"))
+                continue;
+            PipeManager pipe = obj.GetComponent<PipeManager>();
+            if (big)
+            {
+                return;
+            }
+            if (pipe.miniOnly && (state != Enums.PowerupState.MiniMushroom && !small))
+            {
+                continue;
+            }
+            if (!pipe.left)
+            {
+                continue;
+            }
+            if (!pipe.entryAllowed)
+                continue;
+
+            //Enter pipe
+            pipeEntering = pipe;
+            Spinning = false;
+            pipeDirection = Vector2.right;
+
+            body.velocity = Vector2.right;
+            transform.position = body.position = new Vector2(obj.transform.position.x, transform.position.y);
+
+            photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Sound_Powerdown);
+            crouching = false;
+            sliding = false;
+            propeller = false;
+            drill = false;
+            usedPropellerThisJump = false;
+            groundpound = false;
+            inShell = false;
+            break;
+        }
+    }
     void DownwardsPipeCheck() {
         if (!photonView.IsMine || joystick.y > -analogDeadzone || state == Enums.PowerupState.MegaMushroom || !onGround || knockback || inShell)
             return;
@@ -2210,6 +2310,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
             //Enter pipe
             pipeEntering = pipe;
+            Spinning = false;
             pipeDirection = Vector2.down;
             
             body.velocity = Vector2.down;
@@ -2244,6 +2345,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
             //pipe found
             pipeEntering = pipe;
+            Spinning = false;
             pipeDirection = Vector2.up;
 
             body.velocity = Vector2.up;
@@ -2333,50 +2435,14 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         HandleWallSlideChecks(currentWallDirection, holdingRight, holdingLeft);
 
         wallSlideRight &= wallSlideTimer > 0 && hitRight;
-        wallSlideLeft &= wallSlideTimer > 0 && hitLeft;
+        wallSlideLeft &= wallSlideTimer > 0 && hitLeft; if (wallSlideLeft || wallSlideRight)
+        {
 
-        if (wallSlideLeft || wallSlideRight) {
-            Spinning = false;
-            //walljump check
-            facingRight = wallSlideLeft;
-            if (jump && wallJumpTimer <= 0) {
-                //perform walljump
-                float horiz = WALLJUMP_HSPEED;
-                cameraController.SetLastFloor();
-                if (equipedBadge == wonderBadge.Climb && !Climbed)
-                {
-                    horiz = 0;
-                    Climbed = true;
-                    animator.SetTrigger("Climbed");
-                }
-                else
-                {
-                    wallJumpTimer = 16 / 60f;
-                }
-                hitRight = false;
-                hitLeft = false;
-                body.velocity = new Vector2(horiz * (wallSlideLeft ? 1 : -1), WALLJUMP_VSPEED);
-                if(small) 
-                {
-                    body.velocity /= 1.5f;
-                }
-                singlejump = false;
-                doublejump = false;
-                triplejump = false;
-                onGround = false;
-                bounce = false;
-                photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Sound_WallJump);
-                photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Voice_WallJump, (byte) Random.Range(1, 3));
-
-                Vector2 offset = new(MainHitbox.size.x / 2f * (wallSlideLeft ? -1 : 1), MainHitbox.size.y / 2f);
-                photonView.RPC(nameof(SpawnParticle), RpcTarget.All, "Prefabs/Particle/WalljumpParticle", body.position + offset, wallSlideLeft ? Vector3.zero : Vector3.up * 180);
-
-                animator.SetTrigger("walljump");
-                wallSlideTimer = 0;
-            }
-        } else {
+        }
+        else
+        {
             //walljump starting check
-            bool canWallslide = !inShell && body.velocity.y < -0.1 && !groundpound && !onGround && !holding && state != Enums.PowerupState.MegaMushroom && !flying && !drill && !crouching && !sliding && !knockback;
+            bool canWallslide = !inShell && !groundpound && !onGround && !holding && state != Enums.PowerupState.MegaMushroom && !flying && !drill && !crouching && !sliding && !knockback;
             if (!canWallslide)
                 return;
 
@@ -2400,10 +2466,60 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                 return;
 
             //Start wallslide
-            wallSlideRight = currentWallDirection == Vector2.right;
-            wallSlideLeft = currentWallDirection == Vector2.left;
+            if (body.velocity.y < -0.1)
+            {
+                wallSlideRight = currentWallDirection == Vector2.right;
+                wallSlideLeft = currentWallDirection == Vector2.left;
+            }
+            wallJumpLeft = currentWallDirection == Vector2.left;
+            wallJumpRight = currentWallDirection == Vector2.right;
             propeller = false;
+            Spinning = false;
         }
+        if (wallJumpLeft || wallJumpRight)
+        {
+            //walljump check
+            facingRight = wallJumpLeft;
+            if (jump && wallJumpTimer <= 0)
+            {
+                //perform walljump
+                float horiz = WALLJUMP_HSPEED;
+                Spinning = false;
+                cameraController.SetLastFloor();
+                if (equipedBadge == wonderBadge.Climb && !Climbed)
+                {
+                    horiz = 0;
+                    Climbed = true;
+                    animator.SetTrigger("Climbed");
+                }
+                else
+                {
+                    wallJumpTimer = 16 / 60f;
+                }
+                hitRight = false;
+                hitLeft = false;
+                body.velocity = new Vector2(horiz * (wallSlideLeft ? 1 : -1), WALLJUMP_VSPEED);
+                if (small)
+                {
+                    body.velocity /= 1.5f;
+                }
+                singlejump = false;
+                doublejump = false;
+                triplejump = false;
+                wallJumpLeft = wallJumpRight = false;
+                onGround = false;
+                bounce = false;
+                photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Sound_WallJump);
+                photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Voice_WallJump, (byte)Random.Range(1, 3));
+
+                Vector2 offset = new(MainHitbox.size.x / 2f * (wallSlideLeft ? -1 : 1), MainHitbox.size.y / 2f);
+                photonView.RPC(nameof(SpawnParticle), RpcTarget.All, "Prefabs/Particle/WalljumpParticle", body.position + offset, wallSlideLeft ? Vector3.zero : Vector3.up * 180);
+
+                animator.SetTrigger("walljump");
+                wallSlideTimer = 0;
+            }
+        }
+        
 
         wallSlideRight &= wallSlideTimer > 0 && hitRight;
         wallSlideLeft &= wallSlideTimer > 0 && hitLeft;
@@ -2416,9 +2532,9 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             return;
         }
 
-        bool moveDownCheck = body.velocity.y < 0;
-        if (!moveDownCheck)
-            return;
+        //bool moveDownCheck = body.velocity.y < 0;
+        //if (!moveDownCheck)
+            //return;
 
         bool wallCollisionCheck = wallDirection == Vector2.left ? hitLeft : hitRight;
         if (!wallCollisionCheck)
@@ -2455,6 +2571,8 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             sliding = false;
             wallSlideLeft = false;
             wallSlideRight = false;
+            wallJumpLeft = false;
+            wallJumpRight = false;
             //alreadyGroundpounded = false;
             groundpound = false;
             groundpoundCounter = 0;
@@ -2484,7 +2602,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             {
                 vel *= 0.75f;
             }
-            if(big || (GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner))
+            if(big || (GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner && equipedBadge != wonderBadge.Lightweight))
             {
                 vel *= 1.25f;
             }
@@ -2502,10 +2620,12 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                 doublejump = false;
                 triplejump = false;
                 Climbed = false;
-                Spinning = false;
                 doubleJumped = false;
-                if(!bounce)
+                if (!bounce)
+                {
                     animator.SetTrigger("Jump");
+                    Spinning = false;
+                }
                 if(equipedBadge == wonderBadge.SMB2 && stoopCharge > .5f)
                 {
                     animator.SetTrigger("SMB2Jump");
@@ -3145,7 +3265,10 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             return;
 
         //Pipes
-        if (!paused && pipeTimer <= 0) {
+        if (!paused && pipeTimer <= 0)
+        {
+            RightPipeCheck();
+            LeftPipeCheck();
             DownwardsPipeCheck();
             UpwardsPipeCheck();
         }
@@ -3156,6 +3279,8 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
             wallSlideLeft = false;
             wallSlideRight = false;
+            wallJumpLeft = false;
+            wallJumpRight = false;
             crouching = false;
             inShell = false;
             body.velocity -= body.velocity * (delta * 2f);
@@ -3197,11 +3322,11 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         bool jump = false;
         if (equipedBadge == wonderBadge.JetRun)
         {
-            jump = jumpBuffer > 0 && (onGround || koyoteTime < 1f || wallSlideLeft || wallSlideRight) && !paused;
+            jump = jumpBuffer > 0 && (onGround || koyoteTime < 1f || wallJumpLeft || wallJumpRight) && !paused;
         }
         else
         {
-            jump = jumpBuffer > 0 && (onGround || koyoteTime < 0.07f || wallSlideLeft || wallSlideRight) && !paused;
+            jump = jumpBuffer > 0 && (onGround || koyoteTime < 0.07f || wallJumpLeft || wallJumpRight) && !paused;
         }
 
         if (drill) {
@@ -3282,6 +3407,8 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             usedPropellerThisJump = false;
             wallSlideLeft = false;
             wallSlideRight = false;
+            wallJumpLeft = false;
+            wallJumpRight = false;
             jumping = false;
             if (drill)
                 SpawnParticle("Prefabs/Particle/GroundpoundDust", body.position);
@@ -3402,7 +3529,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             Enums.PowerupState.MegaMushroom => 2f,
             _ => 1f,
         };
-        if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner)
+        if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner && equipedBadge != wonderBadge.Lightweight)
         {
             terminalVelocityModifier *= 2;
         }
@@ -3430,6 +3557,8 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         if (crouching || sliding || skidding) {
             wallSlideLeft = false;
             wallSlideRight = false;
+            wallJumpLeft = false;
+            wallJumpRight = false;
         }
 
         if (previousOnGround && !onGround && !properJump && crouching && !inShell && !groundpound)
@@ -3520,6 +3649,8 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
             wallSlideLeft = false;
             wallSlideRight = false;
+            wallJumpLeft = false;
+            wallJumpRight = false;
             groundpound = true;
             Spinning = false;
             animator.SetTrigger("GroundPound");
@@ -3592,7 +3723,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
     public bool CanTwirl()
     {
-        return !propeller && !knockback && !(groundpound && !onGround);
+        return !propeller && !knockback && !(groundpound && !onGround) && !pipeEntering;
     }
     void OnDrawGizmos() {
         if (!body)

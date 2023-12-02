@@ -64,6 +64,8 @@ public static class Enums {
         [SoundData("enemy/shell_combo5")]                       Enemy_Shell_Combo5 = 13,
         [SoundData("enemy/shell_combo6")]                       Enemy_Shell_Combo6 = 14,
         [SoundData("enemy/shell_combo7")]                       Enemy_Shell_Combo7 = 15,
+        [SoundData("enemy/stomp_spike")]                        Enemy_Spin_Stomp = 98,
+        [SoundData("enemy/stomp_spin")]                         Enemy_Spin_Deflect = 99,
 
         //Player
         [SoundData("player/collision")]                         Player_Sound_Collision = 17,
@@ -84,6 +86,8 @@ public static class Enums {
         [SoundData("player/slide_end")]                         Player_Sound_SlideEnd = 92,
         [SoundData("player/walljump")]                          Player_Sound_WallJump = 29,
         [SoundData("player/wallslide")]                         Player_Sound_WallSlide = 30,
+        [SoundData("player/twirl")]                             Player_Sound_Twirl = 96,
+        [SoundData("player/spin_jump")]                         Player_Sound_Spinjump = 97,
 
         [SoundData("player/walk/grass")]                        Player_Walk_Grass = 31,
         [SoundData("player/walk/snow")]                         Player_Walk_Snow = 32,

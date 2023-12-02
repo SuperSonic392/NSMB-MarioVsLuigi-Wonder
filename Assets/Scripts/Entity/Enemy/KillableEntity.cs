@@ -125,6 +125,51 @@ public abstract class KillableEntity : MonoBehaviourPun, IFreezableEntity, ICust
             photonView.RPC(nameof(SetLeft), RpcTarget.All, damageDirection.x < 0);
         }
     }
+    public virtual void InteractWithPlayerSpin(PlayerController player)
+    {
+        if (player.Frozen)
+            return;
+
+        Vector2 damageDirection = (player.body.position - body.position).normalized;
+        bool attackedFromAbove = Vector2.Dot(damageDirection, Vector2.up) > 0.5f && !player.onGround;
+
+        if (!attackedFromAbove && player.state == Enums.PowerupState.BlueShell && player.crouching && !player.inShell)
+        {
+            photonView.RPC(nameof(SetLeft), RpcTarget.All, damageDirection.x > 0);
+        }
+        else if (player.invincible > 0 || player.inShell || player.sliding
+            || (player.groundpound && player.state != Enums.PowerupState.MiniMushroom && attackedFromAbove)
+            || player.state == Enums.PowerupState.MegaMushroom)
+        {
+
+            photonView.RPC(nameof(SpecialKill), RpcTarget.All, player.body.velocity.x > 0, player.groundpound, player.StarCombo++);
+        }
+        else if (attackedFromAbove)
+        {
+            if (player.state == Enums.PowerupState.MiniMushroom)
+            {
+                if (player.groundpound)
+                {
+                    player.groundpound = false;
+                    photonView.RPC(nameof(SpecialKill), RpcTarget.All, player.body.velocity.x > 0, player.groundpound, player.StarCombo++);
+                }
+                player.bounce = true;
+            }
+            else
+            {
+                photonView.RPC(nameof(SpecialKill), RpcTarget.All, player.body.velocity.x > 0, player.groundpound, player.StarCombo++);
+                player.bounce = !player.groundpound;
+            }
+            player.photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Enemy_Spin_Stomp);
+            player.drill = false;
+
+        }
+        else if (player.hitInvincibilityCounter <= 0)
+        {
+            player.photonView.RPC(nameof(PlayerController.Powerdown), RpcTarget.All, false);
+            photonView.RPC(nameof(SetLeft), RpcTarget.All, damageDirection.x < 0);
+        }
+    }
     #endregion
 
     #region PunRPCs
