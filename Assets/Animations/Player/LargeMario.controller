@@ -416,13 +416,13 @@ AnimatorState:
   m_WriteDefaultValues: 1
   m_Mirror: 1
   m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
+  m_MirrorParameterActive: 1
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 91ee6a3e95d2d0a4b967d10a403d010f, type: 2}
   m_Tag: 
   m_SpeedParameter: 
-  m_MirrorParameter: 
+  m_MirrorParameter: jetrun
   m_CycleOffsetParameter: 
   m_TimeParameter: 
 --- !u!1102 &-8388692202612643822
@@ -763,7 +763,10 @@ AnimatorStateTransition:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 
-  m_Conditions: []
+  m_Conditions:
+  - m_ConditionMode: 2
+    m_ConditionEvent: knockback
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5052705109719678780}
   m_Solo: 0
@@ -1051,13 +1054,13 @@ AnimatorState:
   m_WriteDefaultValues: 1
   m_Mirror: 1
   m_SpeedParameterActive: 0
-  m_MirrorParameterActive: 0
+  m_MirrorParameterActive: 1
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 6b22bcaabea33fb42b3ead6efe9fad97, type: 2}
   m_Tag: 
   m_SpeedParameter: velocityX
-  m_MirrorParameter: 
+  m_MirrorParameter: jetrun
   m_CycleOffsetParameter: 
   m_TimeParameter: 
 --- !u!1101 &-7349191400333185441
@@ -1521,7 +1524,7 @@ AnimatorStateMachine:
     m_Position: {x: 100, y: 300, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -3389436472737963214}
-    m_Position: {x: -160, y: 240, z: 0}
+    m_Position: {x: -300, y: 290, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4619978320868502150}
     m_Position: {x: 550, y: 400, z: 0}
@@ -1618,7 +1621,7 @@ AnimatorStateMachine:
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 470, y: 270, z: 0}
+  m_AnyStatePosition: {x: 480, y: 270, z: 0}
   m_EntryPosition: {x: 460, y: 180, z: 0}
   m_ExitPosition: {x: 460, y: 220, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
@@ -5167,7 +5170,7 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0.19216219
   m_TransitionOffset: 0.07708102
-  m_ExitTime: 0.578108
+  m_ExitTime: 1
   m_HasExitTime: 1
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -6815,6 +6818,12 @@ AnimatorController:
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
   - m_Name: pipeSide
+    m_Type: 4
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: jetrun
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -12029,7 +12038,10 @@ AnimatorStateTransition:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: 
-  m_Conditions: []
+  m_Conditions:
+  - m_ConditionMode: 2
+    m_ConditionEvent: knockback
+    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 5052705109719678780}
   m_Solo: 0

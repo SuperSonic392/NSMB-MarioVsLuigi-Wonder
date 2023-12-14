@@ -5,7 +5,7 @@ using NSMB.Utils;
 using JetBrains.Annotations;
 
 public class CameraController : MonoBehaviour
-{ //warning: this code is mid refactor
+{ 
 
     //refactor stuff
     public float offset; //used for lookahead
@@ -168,6 +168,12 @@ public class CameraController : MonoBehaviour
         currentPosition = (Vector2)transform.position + airOffset;
         smoothDampVel = Vector3.zero;
         LateUpdate();
+        float minY = GameManager.Instance.cameraMinY, heightY = GameManager.Instance.cameraHeightY;
+        float minX = GameManager.Instance.cameraMinX, maxX = GameManager.Instance.cameraMaxX;
+        float vOrtho = targetCamera.orthographicSize;
+        float xOrtho = vOrtho * targetCamera.aspect;
+        currentPosition.x = Mathf.Clamp(currentPosition.x, minX + xOrtho, maxX - xOrtho);
+        currentPosition.y = Mathf.Clamp(currentPosition.y, minY + vOrtho, heightY == 0 ? (minY + vOrtho) : (minY + heightY - vOrtho));
     }
     public void SetLastFloor()
     {
@@ -187,7 +193,6 @@ public class CameraController : MonoBehaviour
         // instant camera movements. we dont want to lag behind in these cases
 
         float playerHeight = controller.WorldHitboxSize.y;
-        float cameraTopMax = Mathf.Min(1.5f + playerHeight, 4f);
         Utils.WrapWorldLocation(ref playerPos);
         float xDifference = Vector2.Distance(Vector2.right * currentPosition.x, Vector2.right * playerPos.x);
         bool right = currentPosition.x > playerPos.x;
@@ -195,41 +200,10 @@ public class CameraController : MonoBehaviour
         if (xDifference >= 8)
         {
             currentPosition.x += (right ? -1 : 1) * GameManager.Instance.levelWidthTile / 2f;
-            xDifference = Vector2.Distance(Vector2.right * currentPosition.x, Vector2.right * playerPos.x);
-            right = currentPosition.x > playerPos.x;
             if (IsControllingCamera)
                 BackgroundLoop.Instance.wrap = true;
         }
-
-        //if (xDifference > 0.25f)
-            //currentPosition.x += (0.25f - xDifference - 0.01f) * (right ? 1 : -1);
-
-        // lagging camera movements
-        Vector3 targetPosition = currentPosition;
-        if (controller.onGround)
-            lastFloor = playerPos.y;
-        bool validFloor = controller.onGround || lastFloor < playerPos.y;
-
-        //top camera clip ON GROUND. slowly pan up, dont do it instantly.
-        if (validFloor && lastFloor - (currentPosition.y + vOrtho) + cameraTopMax + 2f > 0)
-            targetPosition.y = playerPos.y - vOrtho + cameraTopMax + 2f;
-
-
-        // Smoothing
-
-        targetPosition = Vector3.SmoothDamp(currentPosition, targetPosition, ref smoothDampVel, .5f);
-
-        // Clamping to within level bounds
-
-        targetPosition.x = Mathf.Clamp(targetPosition.x, minX + xOrtho, maxX - xOrtho);
-        targetPosition.y = Mathf.Clamp(targetPosition.y, minY + vOrtho, heightY == 0 ? (minY + vOrtho) : (minY + heightY - vOrtho));
-
-        // Z preservation
-
-        //targetPosition = AntiJitter(targetPosition);
-        targetPosition.z = startingZ;
-
-        return targetPosition;
+        return Vector3.zero;
     }
     private void OnDrawGizmos()
     { //ok, this is good. although outdated

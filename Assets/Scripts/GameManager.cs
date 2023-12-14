@@ -1013,6 +1013,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
         foreach (GameObject starSpawn in GameObject.FindGameObjectsWithTag("WonderFlowerSpawn"))
         {
             Gizmos.DrawCube(starSpawn.transform.position, Vector3.one);
+            Gizmos.DrawIcon(starSpawn.transform.position, "WonderFlower", true, new Color(1, 1, 1, 0.5f));
         }
     }
 

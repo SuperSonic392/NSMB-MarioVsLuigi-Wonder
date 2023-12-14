@@ -38,7 +38,7 @@ public class DebugControls : MonoBehaviour {
         DebugItem(Key.Numpad6, "Star");
         DebugItem(Key.Numpad7, "PropellerMushroom");
         DebugItem(Key.Numpad8, "IceFlower");
-        DebugItem(Key.Numpad9, "1-Up");
+        DebugItem(Key.Numpad9, "DrillMushroom");
         DebugEntity(Key.F1, "Koopa");
         DebugEntity(Key.F2, "RedKoopa");
         DebugEntity(Key.F3, "BlueKoopa");

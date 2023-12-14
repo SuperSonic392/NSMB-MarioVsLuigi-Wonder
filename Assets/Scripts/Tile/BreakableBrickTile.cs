@@ -13,7 +13,7 @@ public class BreakableBrickTile : InteractableTile {
             if (pl.state <= Enums.PowerupState.Small && !pl.drill) {
                 doBreak = breakableBySmallMario || pl.big;
                 doBump = true;
-            } else if (pl.state == Enums.PowerupState.MegaMushroom) {
+            } else if (pl.state == Enums.PowerupState.MegaMushroom || (pl.state == Enums.PowerupState.DrillMushroom && pl.groundpound)) {
                 doBreak = breakableByGiantMario || pl.big;
                 giantBreak = true;
                 doBump = false;

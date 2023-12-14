@@ -8,7 +8,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
     [SerializeField] private Avatar smallAvatar, largeAvatar, kuriboAvatar;
     [SerializeField] private ParticleSystem dust, sparkles, drillParticle, giantParticle, fireParticle;
-    [SerializeField] public GameObject models, smallModel, largeModel, kuriboModel, largeShellExclude, blueShell, propellerHelmet, propeller;
+    [SerializeField] public GameObject models, smallModel, largeModel, kuriboModel, largeShellExclude, blueShell, propellerHelmet, propeller, drillHelmet;
     [SerializeField] private Material glowMaterial;
     [SerializeField] public Color primaryColor = Color.clear, secondaryColor = Color.clear;
     [SerializeField] [ColorUsage(true, false)] private Color? _glowColor = null;
@@ -49,7 +49,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
         if (photonView) {
             enableGlow = !photonView.IsMine;
-            if (!photonView.IsMine && controller.equipedBadge != PlayerController.wonderBadge.Invis)
+            if (!photonView.IsMine && !controller.DoesHaveBadge(PlayerController.wonderBadge.Invis))
                 GameManager.Instance.CreateNametag(controller);
 
             PlayerColorSet colorSet = GlobalController.Instance.skins[(int) photonView.Owner.CustomProperties[Enums.NetPlayerProperties.PlayerColor]];
@@ -102,7 +102,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             renderers.AddRange(GetComponentsInChildren<MeshRenderer>(true));
             renderers.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>(true));
         }
-        if(controller.equipedBadge == PlayerController.wonderBadge.Invis)
+        if(controller.DoesHaveBadge(PlayerController.wonderBadge.Invis))
         {
             models.SetActive(false);
         }
@@ -113,9 +113,17 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
         if (gameover)
             models.SetActive(true);
-        animator.SetFloat("Joystick", Mathf.Abs(Mathf.Round(controller.joystick.x)));
+        if (controller.DoesHaveBadge(PlayerController.wonderBadge.JetRun) && controller.koyoteTime < 1)
+        {
+            animator.SetFloat("Joystick", 1);
+        }
+        else
+        {
+            animator.SetFloat("Joystick", Mathf.Abs(Mathf.Abs(controller.joystick.x) < controller.analogDeadzone ? 0 : 1));
+        }
         animator.SetFloat("JoyY", Mathf.Lerp(animator.GetFloat("JoyY"), Mathf.Round(controller.joystick.y), Time.deltaTime * 15));
         animator.SetBool("Running", controller.running);
+        animator.SetBool("jetrun", !controller.DoesHaveBadge(PlayerController.wonderBadge.JetRun));
         Vector3 targetEuler = models.transform.eulerAngles;
         bool instant = false, changeFacing = false;
         if (!gameover && !controller.Frozen) {
@@ -226,7 +234,14 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
         animator.SetBool("onLeft", controller.wallSlideLeft);
         animator.SetBool("onRight", controller.wallSlideRight);
-        animator.SetBool("onGround", controller.onGround);
+        if(controller.DoesHaveBadge(PlayerController.wonderBadge.JetRun))
+        {
+            animator.SetBool("onGround", controller.koyoteTime < 1);
+        }
+        else
+        {
+            animator.SetBool("onGround", controller.onGround);
+        }
         animator.SetBool("invincible", controller.invincible > 0);
         animator.SetBool("skidding", controller.skidding);
         animator.SetBool("propeller", controller.propeller);
@@ -256,6 +271,10 @@ public class PlayerAnimationController : MonoBehaviourPun {
             }
             if(animatedVelocity > 0)
             animatedVelocity = Mathf.Max(1f, animatedVelocity);
+            if(controller.DoesHaveBadge(PlayerController.wonderBadge.JetRun)) {
+                animator.SetFloat("velocityX", Mathf.Abs(controller.body.velocity.x));
+            }
+            else
             animator.SetFloat("velocityX", animatedVelocity);
             animator.SetFloat("velocityY", body.velocity.y);
             animator.SetBool("doublejump", controller.doublejump);
@@ -313,6 +332,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             Enums.PowerupState.FireFlower => 1,
             Enums.PowerupState.PropellerMushroom => 2,
             Enums.PowerupState.IceFlower => 3,
+            Enums.PowerupState.DrillMushroom => 4,
             _ => 0
         };
         materialBlock.SetFloat("PowerupState", ps);
@@ -375,6 +395,10 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
         largeShellExclude.SetActive(!animator.GetCurrentAnimatorStateInfo(0).IsName("in-shell"));
         propellerHelmet.SetActive(controller.state == Enums.PowerupState.PropellerMushroom);
+        if (drillHelmet)
+        {
+            drillHelmet.SetActive(controller.state == Enums.PowerupState.DrillMushroom);
+        }
         if (controller.goomba)
         {
             animator.avatar = kuriboAvatar;

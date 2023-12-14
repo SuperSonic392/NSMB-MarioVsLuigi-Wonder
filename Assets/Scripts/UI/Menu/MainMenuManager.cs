@@ -348,13 +348,17 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
                 }
             case (byte)Enums.NetEventIds.PlayerChatMessage: {
                     string message = e.CustomData as string;
-
                     if (string.IsNullOrWhiteSpace(message))
                         return;
-
+                    bool start = false;
                     if (sender == null)
                         return;
 
+                    if (message == "start")
+                    {
+                        start = true;
+                        message = "take your time";
+                    }
                     double time = lastMessage.GetValueOrDefault(sender);
                     if (PhotonNetwork.Time - time < 0.75f)
                         return;
@@ -368,10 +372,16 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
                     }
 
                     message = message.Substring(0, Mathf.Min(128, message.Length));
-                    message = message.Replace("<", "«").Replace(">", "»").Replace("\n", " ").Trim();
+                    message = message.Replace("<", "«").Replace(">", "»").Replace("\n", " ").Replace("start", "[take your time]").Trim();
                     message = sender.GetUniqueNickname() + ": " + message.Filter();
-
-                    LocalChatMessage(message, Color.black, false);
+                    if (start)
+                    {
+                        LocalChatMessage(message, new Color(0.5f, 0, 0), false);
+                    }
+                    else
+                    {
+                        LocalChatMessage(message, Color.black, false);
+                    }
                     break;
                 }
             case (byte)Enums.NetEventIds.ChangeMaxPlayers: {
@@ -399,7 +409,7 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
     void OnDisable() {
         PhotonNetwork.RemoveCallbackTarget(this);
     }
-    public TMP_Dropdown badgeDropdown;
+    public TMP_Dropdown badgeDropdown, badgeDropdown2;
     // Unity Stuff
     public void Start() {
 
@@ -407,7 +417,8 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
          * dear god this needs a refactor. does every UI element seriously have to have
          * their callbacks into this one fuckin script?
          */
-        badgeDropdown.SetValueWithoutNotify((int)FindObjectOfType<BadgeManager>().badge);
+        badgeDropdown.SetValueWithoutNotify((int)FindObjectOfType<BadgeManager>().badge1);
+        badgeDropdown2.SetValueWithoutNotify((int)FindObjectOfType<BadgeManager>().badge2);
         Instance = this;
 
         //Clear game-specific settings so they don't carry over
@@ -1211,7 +1222,11 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
     }
     public void SwapBadge(TMP_Dropdown dropdown)
     {
-        FindObjectOfType<BadgeManager>().badge = (PlayerController.wonderBadge)dropdown.value;
+        FindObjectOfType<BadgeManager>().badge1 = (PlayerController.wonderBadge)dropdown.value;
+    }
+    public void SwapBadge2(TMP_Dropdown dropdown)
+    {
+        FindObjectOfType<BadgeManager>().badge2 = (PlayerController.wonderBadge)dropdown.value;
     }
 
     public void SetPlayerColor(int index) {

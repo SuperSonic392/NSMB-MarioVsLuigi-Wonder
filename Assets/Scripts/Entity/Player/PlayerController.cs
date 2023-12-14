@@ -30,16 +30,20 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         AllPropellerMushroom, //added
         AllBlueShell, //added
         AllMiniMushroom, //added
+        AllDrillMushroom, //added
         GoombaProtection, //added
         Lightweight, //added
+        Migit, //adding
         Random, //added
         PrinceChoice //added
     }
+    public float wallJumpDelay;
     public float stoopCharge;
     public bool Climbed;
     public bool doubleJumped;
     public bool Spinning;
-    public wonderBadge equipedBadge;
+    public wonderBadge badge1;
+    public wonderBadge badge2;
     public bool space;
 
     // == NETWORKING VARIABLES ==
@@ -142,7 +146,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
     private bool powerupButtonHeld;
     private bool spinButtonHeld;
-    private readonly float analogDeadzone = 0.35f;
+    public readonly float analogDeadzone = 0.35f;
     public Vector2 joystick, giantSavedVelocity, previousFrameVelocity, previousFramePosition;
 
     public GameObject onSpinner;
@@ -301,13 +305,21 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         { 
             if (photonView.IsMine)
             {
-                if(FindObjectOfType<BadgeManager>().badge == wonderBadge.Random)
+                if(FindObjectOfType<BadgeManager>().badge1 == wonderBadge.Random)
                 {
-                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, Random.Range(1, (int)wonderBadge.Random - 1), photonView.ViewID);
+                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, Random.Range(1, (int)wonderBadge.Random - 1), photonView.ViewID, 1);
                 }
                 else
                 {
-                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, (int)FindObjectOfType<BadgeManager>().badge, photonView.ViewID);
+                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, (int)FindObjectOfType<BadgeManager>().badge1, photonView.ViewID, 1);
+                }
+                if (FindObjectOfType<BadgeManager>().badge2 == wonderBadge.Random)
+                {
+                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, Random.Range(1, (int)wonderBadge.Random - 1), photonView.ViewID, 2);
+                }
+                else
+                {
+                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, (int)FindObjectOfType<BadgeManager>().badge2, photonView.ViewID, 2);
                 }
             }
         }
@@ -349,13 +361,16 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         }
     }
     [PunRPC]
-    public void EquipBadge(int badge, int id)
+    public void EquipBadge(int badge, int id, int badgeid)
     {
         if(badge == (int)wonderBadge.PrinceChoice)
         {
             badge = (int)GameManager.Instance.reccomendedBadge;
         }
-        PhotonView.Find(id).GetComponent<PlayerController>().equipedBadge = (wonderBadge)badge;
+        if(badgeid ==1)
+            PhotonView.Find(id).GetComponent<PlayerController>().badge1 = (wonderBadge)badge;
+        if(badgeid == 2)
+            PhotonView.Find(id).GetComponent<PlayerController>().badge2 = (wonderBadge)badge;
     }
     public void OnDestroy() {
         if (!photonView.IsMine)
@@ -420,7 +435,15 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     public bool wonderOwner;
     public bool goomba;
     public void FixedUpdate() {
-        if(equipedBadge == wonderBadge.Magnet)
+        if(wallJumpDelay > 0)
+        {
+            wallJumpDelay -= Time.fixedDeltaTime;
+            if(wallJumpDelay <= 0 ) 
+            {
+                wallJumpDelay = 0;
+            }
+        }
+        if(DoesHaveBadge(wonderBadge.Magnet))
         {
             AttractCoins();
         }
@@ -435,22 +458,29 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         {
             wonderOwner = !wonderOwner;
         }
-        if (wonderOwner)
+        if(DoesHaveBadge(wonderBadge.Migit))
         {
-            big = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Small && GameManager.Instance.currentWonderEffect != GameManager.WonderEffect.AllSmall && GameManager.Instance.spawnBigPowerups;
-            small = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.AllSmall;
-            if (state == Enums.PowerupState.MegaMushroom)
-            {
-                big = false;
-            }
+            big = false;
+            small = true;
         }
         else
         {
-
-            small = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Small || GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.AllSmall;
-            big = false;
+            if (wonderOwner)
+            {
+                big = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Small && GameManager.Instance.currentWonderEffect != GameManager.WonderEffect.AllSmall && GameManager.Instance.spawnBigPowerups;
+                small = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.AllSmall;
+                if (state == Enums.PowerupState.MegaMushroom)
+                {
+                    big = false;
+                }
+            }
+            else
+            {
+                small = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Small || GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.AllSmall;
+                big = false;
+            }
         }
-        goomba = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Goomba && !wonderOwner && equipedBadge != wonderBadge.GoombaProtection;
+        goomba = GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Goomba && !wonderOwner && !DoesHaveBadge(wonderBadge.GoombaProtection);
         if (!GameManager.Instance.musicEnabled) {
             models.SetActive(false);
             return;
@@ -482,7 +512,6 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         }
         if (holding && holding.dead)
             holding = null;
-
         AnimationController.UpdateAnimatorStates();
         HandleLayerState();
         previousFrameVelocity = body.velocity;
@@ -491,16 +520,11 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         {
             body.gravityScale *= .5f;
         }
-        if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner && equipedBadge != wonderBadge.Lightweight)
+        if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner && !DoesHaveBadge(wonderBadge.Lightweight))
         {
             body.gravityScale *= 2f;
         }
-        if (equipedBadge == wonderBadge.JetRun && koyoteTime < 1)
-        {
-            body.gravityScale = 0.25f;
-            animator.SetBool("onGround", true);
-        }
-        if (equipedBadge == wonderBadge.HighJump)
+        if (DoesHaveBadge(wonderBadge.HighJump))
         {
             animator.SetBool("Scuttle", true);
             if (jumpHeld && body.velocity.y < 5 && body.velocity.y > 0)
@@ -776,13 +800,20 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             }
             else
             {
-                if (Spinning)
+                if(killable.transform.position.y > (transform.position.y+.5f) && state == Enums.PowerupState.DrillMushroom)
                 {
-                    killable.InteractWithPlayerSpin(this);
+                    killable.SpecialKill(facingRight, false, 0);
                 }
                 else
                 {
-                    killable.InteractWithPlayer(this);
+                    if (Spinning)
+                    {
+                        killable.InteractWithPlayerSpin(this);
+                    }
+                    else
+                    {
+                        killable.InteractWithPlayer(this);
+                    }
                 }
             }
             return;
@@ -828,13 +859,6 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             }
             break;
         }
-        case "lava":
-        case "poison": {
-            if (!photonView.IsMine || (GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner))
-                return;
-            photonView.RPC(nameof(Death), RpcTarget.All, false, obj.CompareTag("lava"));
-            return;
-        }
             case "wonderflower":
                 {
                     if (!photonView.IsMine)
@@ -876,6 +900,17 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     }
     protected void OnTriggerStay2D(Collider2D collider) {
         GameObject obj = collider.gameObject;
+        switch (obj.tag)
+        {
+            case "lava":
+            case "poison":
+                {
+                    if (!photonView.IsMine || (GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner))
+                        return;
+                    photonView.RPC(nameof(Death), RpcTarget.All, false, obj.CompareTag("lava"));
+                    return;
+                }
+        }
         if (obj.CompareTag("spinner")) {
             onSpinner = obj;
             return;
@@ -986,7 +1021,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         }
         else
         {
-            if(equipedBadge == wonderBadge.SpinPlus && !doubleJumped)
+            if(DoesHaveBadge(wonderBadge.SpinPlus) && !doubleJumped)
             {
                 SpinJump();
                 return;
@@ -1180,7 +1215,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         bool reserve = cp.statePriority > pp.itemPriority || state == newState;
         bool soundPlayed = false;
         Enums.Sounds sfx = powerup.soundEffect;
-        if(equipedBadge == wonderBadge.AllMiniMushroom && powerup.prefab != "Star" && powerup.state != Enums.PowerupState.MegaMushroom)
+        if(DoesHaveBadge(wonderBadge.AllMiniMushroom) && powerup.prefab != "Star" && powerup.state != Enums.PowerupState.MegaMushroom)
         {
             sfx = Enums.Sounds.Powerup_MiniMushroom_Collect;
         }
@@ -1250,25 +1285,29 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                 storedPowerup = (Powerup) Resources.Load("Scriptables/Powerups/" + state);
             }
             previousState = state;
-            if (equipedBadge == wonderBadge.AllFireFlower && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            if (DoesHaveBadge(wonderBadge.AllFireFlower) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.FireFlower;
             }
-            else if(equipedBadge == wonderBadge.AllIceFlower && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            else if(DoesHaveBadge(wonderBadge.AllIceFlower) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.IceFlower;
             }
-            else if(equipedBadge == wonderBadge.AllPropellerMushroom && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            else if(DoesHaveBadge(wonderBadge.AllPropellerMushroom) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.PropellerMushroom;
             }
-            else if(equipedBadge == wonderBadge.AllBlueShell && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            else if(DoesHaveBadge(wonderBadge.AllBlueShell) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.BlueShell;
             }
-            else if (equipedBadge == wonderBadge.AllMiniMushroom && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            else if (DoesHaveBadge(wonderBadge.AllMiniMushroom) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.MiniMushroom;
+            }
+            else if (DoesHaveBadge(wonderBadge.AllDrillMushroom) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            {
+                state = Enums.PowerupState.DrillMushroom;
             }
             else
             {
@@ -1298,7 +1337,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     public void Powerdown(bool ignoreInvincible) {
         if (!ignoreInvincible && (hitInvincibilityCounter > 0 || invincible > 0))
             return;
-        if(equipedBadge == wonderBadge.OneHitHero || goomba)
+        if(DoesHaveBadge(wonderBadge.OneHitHero) || goomba)
         {
             photonView.RPC(nameof(Death), RpcTarget.All, false, false);
             propeller = false;
@@ -1327,6 +1366,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         case Enums.PowerupState.FireFlower:
         case Enums.PowerupState.IceFlower:
         case Enums.PowerupState.PropellerMushroom:
+        case Enums.PowerupState.DrillMushroom:
         case Enums.PowerupState.BlueShell: {
             state = Enums.PowerupState.Mushroom;
             powerupFlash = 2f;
@@ -1697,7 +1737,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         transform.localScale = Vector2.one;
         transform.position = body.position = GameManager.Instance.GetSpawnpoint(playerId);
         dead = false;
-        if(equipedBadge == wonderBadge.SuperMushroom)
+        if(DoesHaveBadge(wonderBadge.SuperMushroom))
         {
             previousState = state = Enums.PowerupState.Mushroom;
         }
@@ -1729,7 +1769,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         gameObject.SetActive(true);
         dead = false;
         spawned = true;
-        if(equipedBadge == wonderBadge.SuperMushroom)
+        if(DoesHaveBadge(wonderBadge.SuperMushroom))
         {
             state = Enums.PowerupState.Mushroom;
             previousState = Enums.PowerupState.Mushroom;
@@ -2202,8 +2242,16 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     #region -- PIPES --
     void RightPipeCheck()
     {
-        if (!photonView.IsMine || joystick.x < analogDeadzone || state == Enums.PowerupState.MegaMushroom || !onGround || knockback || inShell)
-            return;
+        if(DoesHaveBadge(wonderBadge.JetRun))
+        {
+            if (!photonView.IsMine || joystick.x < analogDeadzone || state == Enums.PowerupState.MegaMushroom || koyoteTime >= 1 || knockback || inShell)
+                return;
+        }
+        else
+        {
+            if (!photonView.IsMine || joystick.x < analogDeadzone || state == Enums.PowerupState.MegaMushroom || !onGround || knockback || inShell)
+                return;
+        }
         foreach (RaycastHit2D hit in Physics2D.RaycastAll(body.position, Vector2.right, .1f))
         {
             GameObject obj = hit.transform.gameObject;
@@ -2246,8 +2294,16 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     }
     void LeftPipeCheck()
     {
-        if (!photonView.IsMine || joystick.x > -analogDeadzone || state == Enums.PowerupState.MegaMushroom || !onGround || knockback || inShell)
-            return;
+        if (DoesHaveBadge(wonderBadge.JetRun))
+        {
+            if (!photonView.IsMine || joystick.x > -analogDeadzone || state == Enums.PowerupState.MegaMushroom || koyoteTime >= 1 || knockback || inShell)
+                return;
+        }
+        else
+        {
+            if (!photonView.IsMine || joystick.x > -analogDeadzone || state == Enums.PowerupState.MegaMushroom || !onGround || knockback || inShell)
+                return;
+        }
         foreach (RaycastHit2D hit in Physics2D.RaycastAll(body.position, Vector2.left, .1f))
         {
             GameObject obj = hit.transform.gameObject;
@@ -2338,8 +2394,10 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             if (!obj.CompareTag("pipe"))
                 continue;
             PipeManager pipe = obj.GetComponent<PipeManager>();
-            if (pipe.miniOnly && state != Enums.PowerupState.MiniMushroom)
+            if (pipe.miniOnly && (state != Enums.PowerupState.MiniMushroom && !small))
+            {
                 continue;
+            }
             if (!pipe.entryAllowed)
                 continue;
 
@@ -2383,7 +2441,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         {
             stoopCharge = 0;
         }
-        if(equipedBadge == wonderBadge.SMB2)
+        if(DoesHaveBadge(wonderBadge.SMB2))
         {
             animator.SetFloat("StoopCharge", 1);
             if(stoopCharge >= .5f)
@@ -2476,7 +2534,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             propeller = false;
             Spinning = false;
         }
-        if (wallJumpLeft || wallJumpRight)
+        if ((wallJumpLeft || wallJumpRight) && wallJumpDelay <= 0)
         {
             //walljump check
             facingRight = wallJumpLeft;
@@ -2486,11 +2544,12 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                 float horiz = WALLJUMP_HSPEED;
                 Spinning = false;
                 cameraController.SetLastFloor();
-                if (equipedBadge == wonderBadge.Climb && !Climbed)
+                if (DoesHaveBadge(wonderBadge.Climb) && !Climbed)
                 {
                     horiz = 0;
                     Climbed = true;
                     animator.SetTrigger("Climbed");
+                    wallJumpDelay = 0.25f;
                 }
                 else
                 {
@@ -2552,7 +2611,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
     void HandleJumping(bool jump) {
         float koyoteLimit = 0.07f;
-        if(equipedBadge == wonderBadge.JetRun)
+        if(DoesHaveBadge(wonderBadge.JetRun))
         {
             koyoteLimit = 1;
         }
@@ -2602,15 +2661,15 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             {
                 vel *= 0.75f;
             }
-            if(big || (GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner && equipedBadge != wonderBadge.Lightweight))
+            if(big || (GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner && !DoesHaveBadge(wonderBadge.Lightweight)))
             {
                 vel *= 1.25f;
             }
-            if(equipedBadge == wonderBadge.SMB2 && stoopCharge > .5f)
+            if(DoesHaveBadge(wonderBadge.SMB2) && stoopCharge > .5f)
             {
                 vel += 2;
             }
-            if (equipedBadge == wonderBadge.HighJump)
+            if (DoesHaveBadge(wonderBadge.HighJump))
             {
                 vel += .25f;
             }
@@ -2626,7 +2685,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                     animator.SetTrigger("Jump");
                     Spinning = false;
                 }
-                if(equipedBadge == wonderBadge.SMB2 && stoopCharge > .5f)
+                if(DoesHaveBadge(wonderBadge.SMB2) && stoopCharge > .5f)
                 {
                     animator.SetTrigger("SMB2Jump");
                     crouching = false;
@@ -2634,7 +2693,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                     joystick.y = 0;
                 }
             }
-            if (equipedBadge == wonderBadge.timedJump && landing < 0.25f)
+            if (DoesHaveBadge(wonderBadge.timedJump) && landing < 0.25f)
             {
                 vel *= 1.05f;
                 animator.SetTrigger("Celebrate");
@@ -2702,7 +2761,15 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             skidding = false;
 
         if (inShell) {
-            body.velocity = new(SPEED_STAGE_MAX[RUN_STAGE] * 0.9f * (facingRight ? 1 : -1) * (1f - slowdownTimer), body.velocity.y);
+
+            if (DoesHaveBadge(wonderBadge.JetRun))
+            {
+                body.velocity = new(8 * (facingRight ? 1 : -1) * (1f - slowdownTimer), body.velocity.y);
+            }
+            else
+            {
+                body.velocity = new(SPEED_STAGE_MAX[RUN_STAGE] * 0.9f * (facingRight ? 1 : -1) * (1f - slowdownTimer), body.velocity.y);
+            }
             return;
         }
 
@@ -2732,10 +2799,6 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         float sign = Mathf.Sign(body.velocity.x);
 
         bool ground = onGround;
-        if (equipedBadge == wonderBadge.JetRun)
-        {
-            ground = koyoteTime < 1;
-        }
         if ((left ^ right) && (!crouching || (crouching && !onGround && state != Enums.PowerupState.BlueShell)) && !knockback && !sliding) {
             //we can walk here
 
@@ -2744,11 +2807,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
             //check that we're not going above our limit
             float max = SPEED_STAGE_MAX[maxStage];
-            if(equipedBadge == wonderBadge.JetRun)
-            {
-                max = 8;
-            }
-            if (small)
+            if (small || (DoesHaveBadge(wonderBadge.JetRun) && Mathf.Abs(body.velocity.x) > 7))
             {
                 max *= 1.5f;
             }
@@ -3092,6 +3151,137 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
         if (dead || !spawned)
             return;
+
+
+        if (DoesHaveBadge(wonderBadge.JetRun) && koyoteTime < 1 && !crouching)
+        {
+            if (pipeEntering)
+            {
+                return;
+            }
+            bool r = joystick.x > analogDeadzone;
+            bool l = joystick.x < -analogDeadzone;
+            bool c = joystick.y < -analogDeadzone;
+            bool j = jumpBuffer > 0 && koyoteTime < 1f;
+            if(c && onGround)
+            {
+                crouching = true;
+            }
+            if (Mathf.Abs(joystick.x) > analogDeadzone)
+            {
+                facingRight = joystick.x > 0;
+            }
+            if (body.velocity.x * (facingRight ? 1 : -1) < 8) 
+            {
+                if(body.velocity.x * (facingRight ? 1 : -1) >= 0)
+                {
+                    skidding = false;
+                    body.velocity += Vector2.right * (facingRight ? 1 : -1) * delta * 40;
+                    if (body.velocity.x * (facingRight ? 1 : -1) > 8)
+                    {
+                        body.velocity = Vector2.right * (facingRight ? 1 : -1) * 8;
+                    }
+                }
+                else
+                {
+                    skidding = true;
+                    body.velocity += Vector2.right * (facingRight ? 1 : -1) * delta * 20;
+                    if (body.velocity.x * (facingRight ? 1 : -1) >= 0)
+                    {
+                        koyoteTime = 99;
+                    }
+                }
+            }
+            koyoteTime += delta;
+            if (onGround)
+            {
+                koyoteTime = 0;
+            }
+            body.velocity += Vector2.down * delta * (-Mathf.Min(body.velocity.y, 0) * 2) + (Vector2.down * delta * 2);
+            if (knockback)
+            {
+                knockback = false;
+            }
+            //pipes > stuck in block, else the animation gets janked.
+            if (pipeEntering || giantStartTimer > 0 || (giantEndTimer > 0 && stationaryGiantEnd) || animator.GetBool("pipe"))
+                return;
+            if (HandleStuckInBlock())
+                return;
+
+            //Pipes
+            if (pipeTimer <= 0)
+            {
+                RightPipeCheck();
+                LeftPipeCheck();
+                DownwardsPipeCheck();
+                UpwardsPipeCheck();
+            }
+            HandleJumping(j);
+            if (drill)
+            {
+                propellerSpinTimer = 0;
+                if (propeller)
+                {
+                    if (!c)
+                    {
+                        Utils.TickTimer(ref propellerDrillBuffer, 0, Time.deltaTime);
+                        if (propellerDrillBuffer <= 0)
+                            drill = false;
+                    }
+                    else
+                    {
+                        propellerDrillBuffer = 0.15f;
+                    }
+                }
+            }
+
+            if (propellerTimer > 0)
+                body.velocity = new Vector2(body.velocity.x, propellerLaunchVelocity - (propellerTimer < .4f ? (1 - (propellerTimer / .4f)) * propellerLaunchVelocity : 0));
+
+            if (powerupButtonHeld && wallJumpTimer <= 0 && (propeller || !usedPropellerThisJump))
+            {
+                if (body.velocity.y < -0.1f && propeller && !drill && !wallSlideLeft && !wallSlideRight && propellerSpinTimer < propellerSpinTime / 4f)
+                {
+                    propellerSpinTimer = propellerSpinTime;
+                    propeller = true;
+                    photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Powerup_PropellerMushroom_Spin);
+                }
+            }
+
+            if (holding)
+            {
+                wallSlideLeft = false;
+                wallSlideRight = false;
+                SetHoldingOffset();
+            }
+
+            //throwing held item
+            ThrowHeldItem(l, r, c);
+
+            //blue shell enter/exit
+            if (state != Enums.PowerupState.BlueShell || !functionallyRunning)
+                inShell = false;
+            if (big)
+            {
+                if (photonView.IsMine && (hitLeft || hitRight))
+                {
+                    foreach (var tile in tilesHitSide)
+                        InteractWithTile(tile, InteractableTile.InteractionDirection.Up);
+                }
+            }
+            if (inShell)
+            {
+                c = true;
+                if (photonView.IsMine && (hitLeft || hitRight))
+                {
+                    foreach (var tile in tilesHitSide)
+                        InteractWithTile(tile, InteractableTile.InteractionDirection.Up);
+                    facingRight = hitLeft;
+                    photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.World_Block_Bump);
+                }
+            }
+            return;
+        }
         if (goomba)
         {
             knockback = false;
@@ -3135,19 +3325,6 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             }
             body.gravityScale = normalGravity;
             return;
-        }
-        if(equipedBadge == wonderBadge.JetRun && !knockback && !goomba && state != Enums.PowerupState.MegaMushroom)
-        {
-            if (turnaround)
-            {
-                facingRight = !facingRight;
-                turnaround = false;
-            }
-            if(koyoteTime < 1 && !skidding)
-            {
-                body.velocity = new Vector2(facingRight ? 8 : -8, body.velocity.y);
-                animator.SetBool("onGround", koyoteTime < 1);
-            }
         }
 
         if (photonView.IsMine && body.position.y + transform.lossyScale.y < GameManager.Instance.GetLevelMinY()) {
@@ -3320,7 +3497,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         alreadyGroundpounded &= crouch;
         bool up = joystick.y > analogDeadzone && !paused;
         bool jump = false;
-        if (equipedBadge == wonderBadge.JetRun)
+        if (DoesHaveBadge(wonderBadge.JetRun))
         {
             jump = jumpBuffer > 0 && (onGround || koyoteTime < 1f || wallJumpLeft || wallJumpRight) && !paused;
         }
@@ -3383,10 +3560,6 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             }
         }
         bool ground = onGround;
-        if (equipedBadge == wonderBadge.JetRun)
-        {
-            ground = koyoteTime < 1;
-        }
         if (onGround)
         {
             koyoteTime = 0;
@@ -3397,8 +3570,41 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         }
         //Ground
         if (ground) {
+            if (state == Enums.PowerupState.DrillMushroom && Spinning)
+            {
+                bool spinsucc = false;
+                foreach (Vector3Int tile in tilesStandingOn)
+                {
+                    int temp = InteractWithTile(tile, InteractableTile.InteractionDirection.Down);
+                    if(temp == 1)
+                    {
+                        spinsucc = true;
+                        if (big)
+                        {
+                            body.velocity = (Vector2.right * body.velocity.x) + (Vector2.up * 7.5f);
+                        }
+                        else
+                        {
+                            body.velocity = (Vector2.right * body.velocity.x) + (Vector2.up * 5);
+                        }
+                        doGroundSnap = false;
+                        onGround = false;
+                    }
+                }
+                if (!spinsucc)
+                {
+                    Spinning = false;
+                }
+                else
+                {
+                    koyoteTime = 99;
+                }
+            }
+            else
+            {
+                Spinning = false;
+            }
             Climbed = false;
-            Spinning = false;
             doubleJumped = false;
             if (photonView.IsMine && hitRoof && crushGround && body.velocity.y <= 0.1 && state != Enums.PowerupState.MegaMushroom) {
                 //Crushed.
@@ -3529,7 +3735,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             Enums.PowerupState.MegaMushroom => 2f,
             _ => 1f,
         };
-        if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner && equipedBadge != wonderBadge.Lightweight)
+        if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && wonderOwner && !DoesHaveBadge(wonderBadge.Lightweight))
         {
             terminalVelocityModifier *= 2;
         }
@@ -3739,5 +3945,9 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
             Gizmos.DrawWireCube(r.bounds.center, r.bounds.size);
         }
+    }
+    public bool DoesHaveBadge(wonderBadge badge)
+    {
+        return badge1 == badge || badge2 == badge;
     }
 }
