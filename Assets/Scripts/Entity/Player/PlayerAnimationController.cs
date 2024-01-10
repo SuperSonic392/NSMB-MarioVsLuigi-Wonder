@@ -82,6 +82,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
         HandleAnimations();
         animator.SetBool("Bounce", controller.bounce);
         animator.SetBool("A", controller.jumpHeld);
+        animator.SetBool("space", controller.space);
         if (models.transform.rotation.eulerAngles.y < 180f)
         {
             models.transform.localScale = new Vector3(Mathf.Abs(models.transform.localScale.x), models.transform.localScale.y, models.transform.localScale.z);
@@ -165,7 +166,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             propellerVelocity = Mathf.Clamp(propellerVelocity + (1800 * ((controller.flying || controller.propeller || controller.usedPropellerThisJump) ? -1 : 1) * Time.deltaTime), -2500, -300);
             propeller.transform.Rotate(Vector3.forward, propellerVelocity * Time.deltaTime);
 
-            if (instant || wasTurnaround) {
+            if (instant || wasTurnaround || controller.climbing) {
                 models.transform.rotation = Quaternion.Euler(targetEuler);
             } else {
                 float maxRotation = 2000f * Time.deltaTime;
@@ -192,7 +193,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
         SetParticleEmission(fireParticle, !gameover && animator.GetBool("firedeath") && controller.dead && deathTimer > deathUpTime);
 
         //Blinking
-        if (controller.dead || (animator.GetCurrentAnimatorStateInfo(0).IsName("mini-falling") && !animator.IsInTransition(0))) {
+        if (controller.dead || animator.GetCurrentAnimatorStateInfo(0).IsName("mini-falling") && !animator.IsInTransition(0) || controller.shockTimer > 0) {
             eyeState = Enums.PlayerEyeState.Death;
         } else {
             if ((blinkTimer -= Time.fixedDeltaTime) < 0)
@@ -207,7 +208,6 @@ public class PlayerAnimationController : MonoBehaviourPun {
                 eyeState = Enums.PlayerEyeState.Normal;
             }
         }
-
         if (controller.cameraController.IsControllingCamera)
             HorizontalCamera.OFFSET_TARGET = (controller.flying || controller.propeller) ? 0.5f : 0f;
 
@@ -215,6 +215,12 @@ public class PlayerAnimationController : MonoBehaviourPun {
             dust.transform.localPosition = Vector2.zero;
         } else if (controller.wallSlideLeft || controller.wallSlideRight) {
             dust.transform.localPosition = new Vector2(mainHitbox.size.x * (3f / 4f) * (controller.wallSlideLeft ? -1 : 1), mainHitbox.size.y * (3f / 4f));
+        }
+        animator.SetBool("climbing", controller.climbing);
+        if (controller.climbing)
+        {
+            animator.SetFloat("velocityX", controller.body.velocity.magnitude);
+            animator.SetFloat("velocityY", controller.joystick.y);
         }
     }
     private void SetParticleEmission(ParticleSystem particle, bool value) {
@@ -242,13 +248,21 @@ public class PlayerAnimationController : MonoBehaviourPun {
         {
             animator.SetBool("onGround", controller.onGround);
         }
-        animator.SetBool("invincible", controller.invincible > 0);
+        animator.SetBool("invincible", controller.invincible > 0 || controller.zoomtube);
+        if (controller.zoomtube)
+        {
+            if (!animator.GetCurrentAnimatorStateInfo(0).IsName("jump-invincible"))
+            {
+                animator.Play("jump-invincible");
+            }
+        }
         animator.SetBool("skidding", controller.skidding);
         animator.SetBool("propeller", controller.propeller);
         animator.SetBool("propellerSpin", controller.propellerSpinTimer > 0);
         animator.SetBool("crouching", controller.crouching);
         animator.SetBool("groundpound", controller.groundpound);
         animator.SetBool("sliding", controller.sliding);
+        animator.SetFloat("slope", controller.contactNormal.x * (controller.facingRight ? -1 : 1));
         animator.SetBool("knockback", controller.knockback);
         animator.SetBool("facingRight", (left ^ right) ? right : controller.facingRight);
         animator.SetBool("flying", controller.flying);
@@ -280,7 +294,10 @@ public class PlayerAnimationController : MonoBehaviourPun {
             animator.SetBool("doublejump", controller.doublejump);
             animator.SetBool("triplejump", controller.triplejump);
             animator.SetBool("holding", controller.holding != null);
-            animator.SetBool("head carry", controller.holding != null && controller.holding is FrozenCube);
+            if(controller.holding   != null)
+                animator.SetBool("holdingwake", controller.holding.wakeupTimer < 1.5f);
+            //animator.SetBool("head carry", controller.holding != null && controller.holding is FrozenCube);
+            animator.SetLayerWeight(1, (controller.holding != null && controller.holding is FrozenCube) ? 1 : 0);
             animator.SetBool("pipe", controller.pipeEntering != null);
             animator.SetBool("blueshell", controller.state == Enums.PowerupState.BlueShell);
             animator.SetBool("mini", controller.state == Enums.PowerupState.MiniMushroom);
@@ -344,7 +361,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
         //Customizeable player color
         materialBlock.SetVector("OverallsColor", primaryColor);
         materialBlock.SetVector("ShirtColor", secondaryColor);
-        if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Metal && controller.wonderOwner)
+        if(controller.mtl)
         {
             _Metallic += Time.deltaTime;
             if(_Metallic > 1)

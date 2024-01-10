@@ -24,7 +24,7 @@ public abstract class KillableEntity : MonoBehaviourPun, IFreezableEntity, ICust
     public bool IsFlying => flying;
     public bool Active { get; set; } = true;
 
-    public bool dead, left = true, collide = true, iceCarryable = true, flying;
+    public bool dead, left = true, collide = true, iceCarryable = true, flying, drillKillable = true;
     public Rigidbody2D body;
     public BoxCollider2D hitbox;
     protected Animator animator;

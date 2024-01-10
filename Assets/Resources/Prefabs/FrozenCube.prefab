@@ -59,12 +59,15 @@ MonoBehaviour:
   collide: 1
   iceCarryable: 0
   flying: 0
+  drillKillable: 1
   body: {fileID: -1029166702606754831}
   hitbox: {fileID: 0}
   holder: {fileID: 0}
   previousHolder: {fileID: 0}
   holderOffset: {x: 0, y: 0, z: 0}
+  selfOffset: {x: 0, y: 0, z: 0}
   canPlace: 0
+  wakeupTimer: 5
   throwSpeed: 7.25
   shakeSpeed: 80
   shakeAmount: 2

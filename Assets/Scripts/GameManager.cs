@@ -17,6 +17,11 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IConnectionCallbacks, IMatchmakingCallbacks {
 
+    [Header("HMM scripts")]
+    public int forceLives = 0;
+    public Enums.PowerupState spawnState;
+
+    [Header("Wonder Effects")]
     public PlayerController.wonderBadge reccomendedBadge;
     public List<WonderEffect> PossibleEffects = new List<WonderEffect>();
     public enum WonderEffect
@@ -36,6 +41,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
     public WonderEffect currentWonderEffect = WonderEffect.None;
     public float wonderTimer;
     public bool WonderBackfire;
+    [Header("Normal Stuff")]
     private static GameManager _instance;
     public static GameManager Instance {
         get {

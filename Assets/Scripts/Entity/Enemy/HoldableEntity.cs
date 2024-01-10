@@ -4,16 +4,20 @@ using Photon.Pun;
 public abstract class HoldableEntity : KillableEntity {
 
     public PlayerController holder, previousHolder;
-    public Vector3 holderOffset;
+    public Vector3 holderOffset, selfOffset;
     public bool canPlace = true;
+    public float wakeupTimer = 5;
 
     #region Unity Methods
     public void LateUpdate() {
         if (!holder)
             return;
-
+        Vector3 off = selfOffset;
+        off.x *= holder.transform.localScale.x;
+        off.y *= holder.transform.localScale.y;
+        off.z *= holder.transform.localScale.z;
         body.velocity = Vector2.zero;
-        body.position = transform.position = holder.transform.position + holderOffset;
+        body.position = transform.position = holder.transform.position + holderOffset + (off * (holder.state == Enums.PowerupState.Small ? 0.5f : 1f));
         return;
     }
 

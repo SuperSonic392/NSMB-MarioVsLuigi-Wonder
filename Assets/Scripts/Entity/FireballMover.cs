@@ -120,6 +120,15 @@ public class FireballMover : MonoBehaviourPun {
 
             break;
         }
+        case "amp": {
+            KillableEntity amp = collider.gameObject.GetComponentInParent<AmpWalk>();
+            if (isIceball && !amp.Frozen) {
+                PhotonNetwork.Instantiate("Prefabs/FrozenCube", amp.transform.position + new Vector3(0, 0.05f, 0), Quaternion.identity, 0, new object[] { amp.photonView.ViewID });
+            }
+            PhotonNetwork.Destroy(gameObject);
+
+            break;
+        }
         case "bobomb": {
             BobombWalk bobomb = collider.gameObject.GetComponentInParent<BobombWalk>();
             if (bobomb.dead || bobomb.Frozen)

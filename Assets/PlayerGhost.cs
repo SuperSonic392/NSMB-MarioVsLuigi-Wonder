@@ -32,8 +32,9 @@ public class PlayerGhost : MonoBehaviour
             Debug.LogError("No Target!");
             return;
         }
-        if(!target.gameObject.activeSelf)
+        if(!target.gameObject.activeSelf || target.pipeEntering)
         {
+            me.speed = 0;
             return;
         }
         Animator targetAnim = target.gameObject.GetComponent<Animator>();

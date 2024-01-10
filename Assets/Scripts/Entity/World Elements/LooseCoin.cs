@@ -52,7 +52,10 @@ public class LooseCoin : MonoBehaviourPun {
 
         if(attractionTarget != null)
         {
-            body.velocity = (attractionTarget.position - transform.position).normalized * 50;
+            Vector2 mov = (attractionTarget.position - transform.position).normalized;
+            transform.LookAt((Vector2)attractionTarget.position);
+            body.velocity = transform.forward * 50;
+            transform.rotation = Quaternion.identity;
         }
         prevFrameVelocity = body.velocity;
 

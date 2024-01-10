@@ -354,7 +354,7 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
                     if (sender == null)
                         return;
 
-                    if (message == "start")
+                    if (message.ToLower() == "start")
                     {
                         start = true;
                         message = "take your time";
@@ -372,7 +372,11 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
                     }
 
                     message = message.Substring(0, Mathf.Min(128, message.Length));
-                    message = message.Replace("<", "«").Replace(">", "»").Replace("\n", " ").Replace("start", "[take your time]").Trim();
+                    message = message.Replace("<", "«").Replace(">", "»").Replace("\n", " ").Trim();
+                    if (message.ToLower().Contains("start"))
+                    {
+                        message = message.ToLower().Replace("start", "[take your time]");
+                    }
                     message = sender.GetUniqueNickname() + ": " + message.Filter();
                     if (start)
                     {

@@ -19,8 +19,8 @@ namespace NSMB.Utils {
                 case PlayerController.wonderBadge.None:
                     ret = "None";
                     break;
-                case PlayerController.wonderBadge.ParachuteCap:
-                    ret = "Parachute Cap";
+                case PlayerController.wonderBadge.GrappleVine:
+                    ret = "Grapple Vine";
                     break;
                 case PlayerController.wonderBadge.HighJump:
                     ret = "Floating High Jump";

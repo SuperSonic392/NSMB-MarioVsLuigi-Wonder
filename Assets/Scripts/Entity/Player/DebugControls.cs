@@ -46,6 +46,7 @@ public class DebugControls : MonoBehaviour {
         DebugEntity(Key.F5, "Bobomb");
         DebugEntity(Key.F6, "BulletBill");
         DebugEntity(Key.F7, "Spiny");
+        DebugEntity(Key.F8, "Amp");
 
         FreezePlayer(Key.F9);
 
