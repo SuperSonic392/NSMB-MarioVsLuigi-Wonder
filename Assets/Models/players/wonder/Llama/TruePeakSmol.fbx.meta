@@ -1,0 +1,685 @@
+fileFormatVersion: 2
+guid: 173f3b0bbe3e72f4ea7010329b9f9a55
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: all_tx
+    second: {fileID: 2100000, guid: 7f395e21c7cabfc48b0b31b84b3a3eba, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: eye_tx
+    second: {fileID: 2100000, guid: 18f0e897fca98b34abaae46b24ef6aca, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: "\nClip 'small_model|mario_model_mg|mario_model_mg|attack_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'skl_root'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|big_goal_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_l1'
+      has scale animation that will be discarded.\n\t'leg_r1' has scale animation
+      that will be discarded.\n\t'spin' has scale animation that will be discarded.\n\t'arm_l1'
+      has translation animation that will be discarded.\n\t'arm_l1' has scale animation
+      that will be discarded.\n\t'arm_l2' has scale animation that will be discarded.\n\t'arm_r1'
+      has translation animation that will be discarded.\n\t'arm_r1' has scale animation
+      that will be discarded.\n\t'arm_r2' has scale animation that will be discarded.\n\nClip
+      'small_model|mario_model_mg|mario_model_mg|big_hip_squat_mario_model_mg' has
+      import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'head' has scale
+      animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|bt_goal_jmp_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_l2'
+      has scale animation that will be discarded.\n\t'leg_r2' has scale animation
+      that will be discarded.\n\t'arm_l2' has scale animation that will be discarded.\n\t'arm_r2'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|bt_surprise_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|coin_comp_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_l2'
+      has scale animation that will be discarded.\n\t'leg_r2' has scale animation
+      that will be discarded.\n\t'arm_l2' has scale animation that will be discarded.\n\t'arm_r2'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|course_in_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has scale animation that will be discarded.\n\t'arm_l2' has scale animation
+      that will be discarded.\n\t'wrist_l1' has scale animation that will be discarded.\n\nClip
+      'small_model|mario_model_mg|mario_model_mg|dead_mario_model_mg' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'head' has translation animation
+      that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|dead_pose_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\t'head' has translation animation
+      that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|find_surprise_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|hang_start_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has scale animation that will be discarded.\n\t'arm_l2' has scale animation
+      that will be discarded.\n\t'wrist_l1' has scale animation that will be discarded.\n\t'arm_r1'
+      has scale animation that will be discarded.\n\t'arm_r2' has scale animation
+      that will be discarded.\n\t'wrist_r1' has scale animation that will be discarded.\n\t'head'
+      has translation animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|hang_up.001_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has scale animation that will be discarded.\n\t'arm_l2' has scale animation
+      that will be discarded.\n\t'wrist_l1' has scale animation that will be discarded.\n\t'arm_r1'
+      has scale animation that will be discarded.\n\t'arm_r2' has scale animation
+      that will be discarded.\n\t'wrist_r1' has scale animation that will be discarded.\n\nClip
+      'small_model|mario_model_mg|mario_model_mg|ice_pickup_mario_model_mg' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'leg_l1' has translation animation
+      that will be discarded.\n\t'leg_r1' has translation animation that will be
+      discarded.\n\t'head' has translation animation that will be discarded.\n\t'head'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|jr_crear_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\t'arm_l1' has translation animation
+      that will be discarded.\n\t'arm_l1' has scale animation that will be discarded.\n\t'arm_l2'
+      has scale animation that will be discarded.\n\t'wrist_l1' has scale animation
+      that will be discarded.\n\t'arm_r1' has translation animation that will be
+      discarded.\n\t'arm_r1' has scale animation that will be discarded.\n\t'arm_r2'
+      has scale animation that will be discarded.\n\t'wrist_r1' has scale animation
+      that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|jump.002_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'wrist_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|jump_b_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'wrist_l1'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|jump_c_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_r1'
+      has scale animation that will be discarded.\n\t'leg_r2' has scale animation
+      that will be discarded.\n\t'arm_r1' has scale animation that will be discarded.\n\t'arm_r2'
+      has scale animation that will be discarded.\n\t'wrist_r1' has scale animation
+      that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|jump_e_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'wrist_l1'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|jump_hang_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|jump_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'wrist_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|m_kiss_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has translation animation that will be discarded.\n\t'arm_r1' has translation
+      animation that will be discarded.\n\t'head' has translation animation that
+      will be discarded.\n\t'head' has scale animation that will be discarded.\n\nClip
+      'small_model|mario_model_mg|mario_model_mg|move1_mario_model_mg' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'skl_root' has scale animation
+      that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|net_attack_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'skl_root'
+      has scale animation that will be discarded.\n\t'arm_r1' has scale animation
+      that will be discarded.\n\t'arm_r2' has scale animation that will be discarded.\n\t'wrist_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|net_walk1_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_l1'
+      has scale animation that will be discarded.\n\t'leg_r1' has scale animation
+      that will be discarded.\n\t'arm_l1' has scale animation that will be discarded.\n\t'arm_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|net_walk2_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has scale animation that will be discarded.\n\t'arm_r1' has scale animation
+      that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|opm_jr_notice_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|opm_notice_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|opm_surprise1_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\t'head' has translation animation
+      that will be discarded.\n\t'head' has scale animation that will be discarded.\n\nClip
+      'small_model|mario_model_mg|mario_model_mg|opm_surprise2_mario_model_mg' has
+      import animation warnings that might lower retargeting quality:\nNote: Activate
+      translation DOF on avatar to improve retargeting quality.\n\t'spin' has scale
+      animation that will be discarded.\n\t'head' has translation animation that
+      will be discarded.\n\t'head' has scale animation that will be discarded.\n\nClip
+      'small_model|mario_model_mg|mario_model_mg|pea_plant_mario_model_mg' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'leg_l1' has scale animation
+      that will be discarded.\n\t'leg_r1' has scale animation that will be discarded.\n\t'spin'
+      has scale animation that will be discarded.\n\t'arm_l2' has scale animation
+      that will be discarded.\n\t'arm_r2' has scale animation that will be discarded.\n\nClip
+      'small_model|mario_model_mg|mario_model_mg|scale_up_mario_model_mg' has import
+      animation warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'spin' has scale animation
+      that will be discarded.\n\t'arm_l1' has scale animation that will be discarded.\n\t'arm_l2'
+      has scale animation that will be discarded.\n\t'wrist_l1' has scale animation
+      that will be discarded.\n\t'arm_r1' has scale animation that will be discarded.\n\t'arm_r2'
+      has scale animation that will be discarded.\n\t'wrist_r1' has scale animation
+      that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|shell_puton_cap_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|swim_dead_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\t'head' has translation animation
+      that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|tree_climb_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|w_jump1_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_l1'
+      has scale animation that will be discarded.\n\t'leg_r1' has scale animation
+      that will be discarded.\n\nClip 'small_model|mario_model_mg|mario_model_mg|zero_g_jump_mario_model_mg'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|attack_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'skl_root'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|big_goal_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_l1'
+      has scale animation that will be discarded.\n\t'leg_r1' has scale animation
+      that will be discarded.\n\t'spin' has scale animation that will be discarded.\n\t'arm_l1'
+      has translation animation that will be discarded.\n\t'arm_l1' has scale animation
+      that will be discarded.\n\t'arm_l2' has scale animation that will be discarded.\n\t'arm_r1'
+      has translation animation that will be discarded.\n\t'arm_r1' has scale animation
+      that will be discarded.\n\t'arm_r2' has scale animation that will be discarded.\n\nClip
+      'small_model|small_model|small_model|bt_goal_jmp_small_model' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'leg_l2' has scale animation
+      that will be discarded.\n\t'leg_r2' has scale animation that will be discarded.\n\t'arm_l2'
+      has scale animation that will be discarded.\n\t'arm_r2' has scale animation
+      that will be discarded.\n\nClip 'small_model|small_model|small_model|bt_surprise_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|coin_comp_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_l2'
+      has scale animation that will be discarded.\n\t'leg_r2' has scale animation
+      that will be discarded.\n\t'arm_l2' has scale animation that will be discarded.\n\t'arm_r2'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|course_in_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has scale animation that will be discarded.\n\t'arm_l2' has scale animation
+      that will be discarded.\n\t'wrist_l1' has scale animation that will be discarded.\n\nClip
+      'small_model|small_model|small_model|dead_pose_small_model' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'spin' has scale animation
+      that will be discarded.\n\nClip 'small_model|small_model|small_model|find_surprise_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|hang_start_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has scale animation that will be discarded.\n\t'arm_l2' has scale animation
+      that will be discarded.\n\t'wrist_l1' has scale animation that will be discarded.\n\t'arm_r1'
+      has scale animation that will be discarded.\n\t'arm_r2' has scale animation
+      that will be discarded.\n\t'wrist_r1' has scale animation that will be discarded.\n\nClip
+      'small_model|small_model|small_model|hang_up.001_small_model' has import animation
+      warnings that might lower retargeting quality:\nNote: Activate translation
+      DOF on avatar to improve retargeting quality.\n\t'arm_l1' has scale animation
+      that will be discarded.\n\t'arm_l2' has scale animation that will be discarded.\n\t'wrist_l1'
+      has scale animation that will be discarded.\n\t'arm_r1' has scale animation
+      that will be discarded.\n\t'arm_r2' has scale animation that will be discarded.\n\t'wrist_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|jr_crear_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\t'arm_l1' has translation animation
+      that will be discarded.\n\t'arm_l1' has scale animation that will be discarded.\n\t'arm_l2'
+      has scale animation that will be discarded.\n\t'wrist_l1' has scale animation
+      that will be discarded.\n\t'arm_r1' has translation animation that will be
+      discarded.\n\t'arm_r1' has scale animation that will be discarded.\n\t'arm_r2'
+      has scale animation that will be discarded.\n\t'wrist_r1' has scale animation
+      that will be discarded.\n\nClip 'small_model|small_model|small_model|jump.002_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'wrist_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|jump_b_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'wrist_l1'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|jump_c_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_r1'
+      has scale animation that will be discarded.\n\t'leg_r2' has scale animation
+      that will be discarded.\n\t'arm_r1' has scale animation that will be discarded.\n\t'arm_r2'
+      has scale animation that will be discarded.\n\t'wrist_r1' has scale animation
+      that will be discarded.\n\nClip 'small_model|small_model|small_model|jump_e_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'wrist_l1'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|jump_hang_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|jump_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'wrist_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|m_kiss_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has translation animation that will be discarded.\n\t'arm_r1' has translation
+      animation that will be discarded.\n\nClip 'small_model|small_model|small_model|move1_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'skl_root'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|net_attack_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'skl_root'
+      has scale animation that will be discarded.\n\t'arm_r1' has scale animation
+      that will be discarded.\n\t'arm_r2' has scale animation that will be discarded.\n\t'wrist_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|net_walk1_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_l1'
+      has scale animation that will be discarded.\n\t'leg_r1' has scale animation
+      that will be discarded.\n\t'arm_l1' has scale animation that will be discarded.\n\t'arm_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|net_walk2_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has scale animation that will be discarded.\n\t'arm_r1' has scale animation
+      that will be discarded.\n\nClip 'small_model|small_model|small_model|opm_jr_notice_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|opm_notice_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|opm_surprise1_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|opm_surprise2_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|pea_plant_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_l1'
+      has scale animation that will be discarded.\n\t'leg_r1' has scale animation
+      that will be discarded.\n\t'spin' has scale animation that will be discarded.\n\t'arm_l2'
+      has scale animation that will be discarded.\n\t'arm_r2' has scale animation
+      that will be discarded.\n\nClip 'small_model|small_model|small_model|scale_up_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\t'arm_l1' has scale animation
+      that will be discarded.\n\t'arm_l2' has scale animation that will be discarded.\n\t'wrist_l1'
+      has scale animation that will be discarded.\n\t'arm_r1' has scale animation
+      that will be discarded.\n\t'arm_r2' has scale animation that will be discarded.\n\t'wrist_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|shell_puton_cap_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_r1'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|swim_dead_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|tree_climb_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'spin'
+      has scale animation that will be discarded.\n\nClip 'small_model|small_model|small_model|w_jump1_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'leg_l1'
+      has scale animation that will be discarded.\n\t'leg_r1' has scale animation
+      that will be discarded.\n\nClip 'small_model|small_model|small_model|zero_g_jump_small_model'
+      has import animation warnings that might lower retargeting quality:\nNote:
+      Activate translation DOF on avatar to improve retargeting quality.\n\t'arm_l1'
+      has scale animation that will be discarded.\n"
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 3
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 0
+  humanDescription:
+    serializedVersion: 3
+    human:
+    - boneName: skl_root
+      humanName: Hips
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: leg_l1
+      humanName: LeftUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: leg_r1
+      humanName: RightUpperLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: leg_l2
+      humanName: LeftLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: leg_r2
+      humanName: RightLowerLeg
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ankle_l1
+      humanName: LeftFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: ankle_r1
+      humanName: RightFoot
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: spin
+      humanName: Spine
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: head
+      humanName: Head
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: arm_l1
+      humanName: LeftUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: arm_r1
+      humanName: RightUpperArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: arm_l2
+      humanName: LeftLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: arm_r2
+      humanName: RightLowerArm
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: wrist_l1
+      humanName: LeftHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: wrist_r1
+      humanName: RightHand
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    skeleton:
+    - name: PeakSmol(Clone)
+      parentName: 
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: Cylinder
+      parentName: PeakSmol(Clone)
+      position: {x: -0, y: 22.596464, z: 0}
+      rotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 188.6847, y: 188.6847, z: 188.6847}
+    - name: small_model
+      parentName: PeakSmol(Clone)
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: -0.7071069, y: 0, z: -0, w: 0.7071067}
+      scale: {x: 100, y: 100, z: 100}
+    - name: mario_all_root
+      parentName: small_model
+      position: {x: -0, y: 0, z: 0}
+      rotation: {x: 0.7071068, y: -0.0000000053561755, z: -0.000000005356176, w: 0.70710677}
+      scale: {x: 1, y: 0.9999998, z: 0.9999998}
+    - name: skl_root
+      parentName: mario_all_root
+      position: {x: 4.0466602e-11, y: 0.054110017, z: -0.012399915}
+      rotation: {x: -0, y: -0.0000000073263835, z: 8.881784e-16, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: leg_l1
+      parentName: skl_root
+      position: {x: -0.014438477, y: 0.0010327238, z: 0.0030712893}
+      rotation: {x: 0.00000010127885, y: -0.00000008940697, z: 1, w: 0.00000000616984}
+      scale: {x: 1.0000004, y: 1.0000007, z: 1.0000004}
+    - name: leg_l2
+      parentName: leg_l1
+      position: {x: 0.000000001117587, y: 0.02871584, z: 0.0000000037252903}
+      rotation: {x: 0.000000038561485, y: -1, z: -0.00000008940697, w: 0.00000020360457}
+      scale: {x: 1.0000002, y: 0.99999994, z: 1.0000007}
+    - name: ankle_l1
+      parentName: leg_l2
+      position: {x: 7.9628076e-10, y: 0.020083023, z: -0.0000000024586915}
+      rotation: {x: -0.7071068, y: -0.00000014506087, z: 0.000000031629792, w: 0.70710677}
+      scale: {x: 0.9999999, y: 1.0000004, z: 1.0000005}
+    - name: ankle_l1_end
+      parentName: ankle_l1
+      position: {x: 0.0000000025331974, y: 0.020083006, z: -2.9802322e-10}
+      rotation: {x: -0, y: 0.000000018509525, z: -0.000000037019028, w: 1}
+      scale: {x: 0.9999998, y: 0.99999946, z: 0.99999964}
+    - name: ankle_l1_end_end
+      parentName: ankle_l1_end
+      position: {x: -0, y: 0.020083006, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: leg_r1
+      parentName: skl_root
+      position: {x: 0.014438477, y: 0.0010327238, z: 0.0030712879}
+      rotation: {x: 0.00000009510901, y: -2.3520819e-16, z: 1, w: 0.0000000061698353}
+      scale: {x: 1.0000001, y: 1.0000004, z: 1.0000004}
+    - name: leg_r2
+      parentName: leg_r1
+      position: {x: 0.0000000019371509, y: 0.028715832, z: 0.0000000035017729}
+      rotation: {x: -0.000000030849176, y: -1, z: 2.6420692e-15, w: 0.00000008020785}
+      scale: {x: 1, y: 0.99999994, z: 1.0000001}
+    - name: ankle_r1
+      parentName: leg_r2
+      position: {x: -0.0000000032782554, y: 0.020083027, z: -0.0000000023841857}
+      rotation: {x: -0.7071068, y: -0.000000034901856, z: -1.7763568e-15, w: 0.70710677}
+      scale: {x: 0.99999964, y: 1, z: 1.0000004}
+    - name: ankle_r1_end
+      parentName: ankle_r1
+      position: {x: 0.0000000020861626, y: 0.020083006, z: 0.0000000017881393}
+      rotation: {x: -0, y: -0.00000003084918, z: 0.000000012339662, w: 1}
+      scale: {x: 0.99999994, y: 1.0000001, z: 1.0000001}
+    - name: ankle_r1_end_end
+      parentName: ankle_r1_end
+      position: {x: -0, y: 0.020083006, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: spin
+      parentName: skl_root
+      position: {x: 2.2806193e-18, y: 0.009724125, z: -6.464745e-10}
+      rotation: {x: 0.00000008940697, y: -2.6645353e-15, z: -2.4313865e-15, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: arm_l1
+      parentName: spin
+      position: {x: -0.031250004, y: 0.022209477, z: -0.00032715022}
+      rotation: {x: 0.7071068, y: -0.7071068, z: 0.00000008784206, w: 0.000000103559316}
+      scale: {x: 1.0000001, y: 1.0000004, z: 1.0000005}
+    - name: arm_l2
+      parentName: arm_l1
+      position: {x: 0.0000000070035457, y: 0.019587416, z: 0.000000002682209}
+      rotation: {x: -0, y: 1, z: 0.0000000018937028, w: 0.0000000018936956}
+      scale: {x: 1, y: 0.9999997, z: 0.99999964}
+    - name: wrist_l1
+      parentName: arm_l2
+      position: {x: 0.0000000040978194, y: 0.018750012, z: -8.9406965e-10}
+      rotation: {x: -6.202442e-15, y: 0.00000033717478, z: 0.0000004768371, w: 1}
+      scale: {x: 1.0000004, y: 1.0000002, z: 0.99999976}
+    - name: wrist_l1_end
+      parentName: wrist_l1
+      position: {x: -0.000000012442469, y: 0.018749999, z: 7.45058e-10}
+      rotation: {x: -4.6761623e-14, y: -0.00000046361532, z: -0.0000004768371, w: 1}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1}
+    - name: wrist_l1_end_end
+      parentName: wrist_l1_end
+      position: {x: -0, y: 0.018749999, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: arm_r1
+      parentName: spin
+      position: {x: 0.031250004, y: 0.022209477, z: -0.00032715}
+      rotation: {x: 0.7071068, y: 0.7071068, z: 0.000000080610796, w: -0.00000009632806}
+      scale: {x: 1.0000001, y: 1, z: 1.0000001}
+    - name: arm_r2
+      parentName: arm_r1
+      position: {x: -0.0000000019953585, y: 0.019587422, z: 2.9802322e-10}
+      rotation: {x: 0.00000005960463, y: -1, z: -0.00000004025313, w: -0.00000017048107}
+      scale: {x: 1.0000008, y: 1.0000004, z: 1.0000001}
+    - name: wrist_r1
+      parentName: arm_r2
+      position: {x: -0.000000002235174, y: 0.018750008, z: 5.9604643e-10}
+      rotation: {x: 0.0000001264406, y: -0.0000005057621, z: -0.00000041723246, w: 1}
+      scale: {x: 0.99999976, y: 0.9999997, z: 1.0000004}
+    - name: wrist_r1_end
+      parentName: wrist_r1
+      position: {x: 0.0000000011920929, y: 0.018749995, z: 5.9604643e-10}
+      rotation: {x: -0.000000105367135, y: 0.0000005689824, z: 0.0000005364417, w: 1}
+      scale: {x: 1.0000001, y: 1.0000001, z: 1.0000002}
+    - name: wrist_r1_end_end
+      parentName: wrist_r1_end
+      position: {x: -0, y: 0.018749999, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    - name: head
+      parentName: spin
+      position: {x: -3.470665e-15, y: 0.03833968, z: 0.0000000017881393}
+      rotation: {x: 0.7071067, y: 0.00000006392181, z: 0.000000042848363, w: 0.7071069}
+      scale: {x: 1, y: 1.0000004, z: 1.0000002}
+    - name: head_end
+      parentName: head
+      position: {x: 9.947598e-16, y: 0.037497666, z: -0.000000007152557}
+      rotation: {x: -0, y: -3.5527133e-15, z: 1.7763567e-14, w: 1}
+      scale: {x: 1, y: 1, z: 0.99999994}
+    - name: head_end_end
+      parentName: head_end
+      position: {x: -0, y: 0.037497673, z: 0}
+      rotation: {x: 0, y: -0, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 1
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 3
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
