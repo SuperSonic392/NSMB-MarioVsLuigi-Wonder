@@ -10,5 +10,9 @@ public class BadgeManager : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(this);
+        if(FindObjectOfType<BadgeManager>() != this)
+        {
+            Destroy(gameObject);
+        }
     }
 }

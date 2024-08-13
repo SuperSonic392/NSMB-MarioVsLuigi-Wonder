@@ -24,7 +24,7 @@ public static class PhotonExtensions {
         ["2f944ff55765d5dd1e60c0f83877ba617508b36f6564c916da36eda6980e1766"] = "Pez", //<- it's him 
         ["2337a92af0af2ad044b82e7508ec7da435dfaed9d846ab373468c38d6dd4877b"] = "PezUno", //thank you Dom
         ["f67501c5280803674ff30caebd3b56918ac6ca686cc6751f54b2933f41eee4f6"] = "PezDos", //thank you HugoAndFriends
-        ["447546d58b424ca40c809b632eb1eaf81a8e27b1757dfbe0300f16b3bc97f2ab"] = "PezTres", //thank you yawny
+        ["447546d58b424ca40c809b632eb1eaf81a8e27b1757dfbe0300f16b3bc97f2ab"] = "PezTres", //thank you YawnY062
         ["a5031a1b00605f4f7b096b3b74c22aedbfc5670a65b8bbe68a307b9a89c94bd1"] = "PezCuatro", //thank you Jumbledsmile267
         ["5758c3c9c93ea5ce4fb7d7d18b2706b618186a098b18674e0138270d76da6a10"] = "PezCinco", //thank you Huluigi, fellow Peak player.
         ["ebf9bc7091cb18364ddd405df8d9487e90c55bc7384d227ac512b7bc5cc24704"] = "PezSeis", //thank you Ultimatum

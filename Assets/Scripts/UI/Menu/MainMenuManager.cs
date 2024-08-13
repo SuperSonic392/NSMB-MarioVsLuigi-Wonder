@@ -354,10 +354,61 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
                     if (sender == null)
                         return;
 
-                    if (message.ToLower() == "start")
+                    string msg = message.ToLower().Replace(" ", ""); msg = msg.ToLower().Replace("[", ""); msg = msg.ToLower().Replace("]", ""); msg = msg.ToLower().Replace("{", ""); msg = msg.ToLower().Replace("}", ""); msg = msg.ToLower().Replace(".", ""); msg = msg.ToLower().Replace("Ʇ", "T"); msg = msg.ToLower().Replace("𝓽", "T"); msg = msg.ToLower().Replace("ᵗ", "T"); msg = msg.ToLower().Replace("ṭ", "T"); msg = msg.ToLower().Replace("т", "T"); msg = msg.ToLower().Replace("τ", "T"); msg = msg.ToLower().Replace("⊤", "T"); msg = msg.ToLower().Replace("✝", "T");
+                    if (message == "START")
+                    {
+                        start = true;
+                        message = "TAKE YOUR TIME";
+                    }
+                    if (message == "start")
                     {
                         start = true;
                         message = "take your time";
+                    }
+                    else if (message.ToLower() == "stard")
+                    {
+                        start = true;
+                        message = "take your time";
+                    }
+                    else if (message.ToLower() == "ztart")
+                    {
+                        start = true;
+                        message = "take your time";
+                    }
+                    else if (message.ToLower() == "ztard")
+                    {
+                        start = true;
+                        message = "take your time";
+                    }
+                    else if (message.ToLower() == " start")
+                    {
+                        start = true;
+                        message = " take your time";
+                    }
+                    else if (message.ToLower() == "s t a r t")
+                    {
+                        start = true;
+                        message = "t a k e   y o u r   t i m e";
+                    }
+                    else if (message.ToLower() == " s t a r d")
+                    {
+                        start = true;
+                        message = " t a k e   y o u r   t i m e";
+                    }
+                    else if (message.ToLower() == " z t a r d")
+                    {
+                        start = true;
+                        message = " t a k e   y o u r   t i m e";
+                    }
+                    else if (message.ToLower() == " z t a r t")
+                    {
+                        start = true;
+                        message = " t a k e   y o u r   t i m e";
+                    }
+                    else if(msg == "start" || msg == "ztart" || msg == "ztard" || msg == "stard")
+                    {
+                        start = true;
+                        message = " take your time";
                     }
                     double time = lastMessage.GetValueOrDefault(sender);
                     if (PhotonNetwork.Time - time < 0.75f)

@@ -20,6 +20,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
     private BoxCollider2D mainHitbox;
     private List<Renderer> renderers = new();
     private MaterialPropertyBlock materialBlock;
+    private float direction;
 
     public Color GlowColor {
         get {
@@ -83,22 +84,6 @@ public class PlayerAnimationController : MonoBehaviourPun {
         animator.SetBool("Bounce", controller.bounce);
         animator.SetBool("A", controller.jumpHeld);
         animator.SetBool("space", controller.space);
-        if (models.transform.rotation.eulerAngles.y < 180f)
-        {
-            models.transform.localScale = new Vector3(Mathf.Abs(models.transform.localScale.x), models.transform.localScale.y, models.transform.localScale.z);
-            foreach(Transform tran in unflip)
-            {
-                tran.localScale = new Vector3(Mathf.Abs(tran.localScale.x), tran.localScale.y, tran.localScale.z);
-            }
-        }
-        else
-        {
-            models.transform.localScale = new Vector3(-Mathf.Abs(models.transform.localScale.x), models.transform.localScale.y, models.transform.localScale.z);
-            foreach (Transform tran in unflip)
-            {
-                tran.localScale = new Vector3(-Mathf.Abs(tran.localScale.x), tran.localScale.y, tran.localScale.z);
-            }
-        }
         if (renderers.Count == 0) {
             renderers.AddRange(GetComponentsInChildren<MeshRenderer>(true));
             renderers.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>(true));
@@ -166,15 +151,29 @@ public class PlayerAnimationController : MonoBehaviourPun {
             propellerVelocity = Mathf.Clamp(propellerVelocity + (1800 * ((controller.flying || controller.propeller || controller.usedPropellerThisJump) ? -1 : 1) * Time.deltaTime), -2500, -300);
             propeller.transform.Rotate(Vector3.forward, propellerVelocity * Time.deltaTime);
 
-            if (instant || wasTurnaround || controller.climbing) {
-                models.transform.rotation = Quaternion.Euler(targetEuler);
-            } else {
-                float maxRotation = 2000f * Time.deltaTime;
-                float x = models.transform.eulerAngles.x, y = models.transform.eulerAngles.y, z = models.transform.eulerAngles.z;
-                x += Mathf.Clamp(targetEuler.x - x, -maxRotation, maxRotation);
-                y += Mathf.Clamp(targetEuler.y - y, -maxRotation, maxRotation);
-                z += Mathf.Clamp(targetEuler.z - z, -maxRotation, maxRotation);
-                models.transform.rotation = Quaternion.Euler(x, y, z);
+            
+            direction = Mathf.Lerp(direction, controller.facingRight ? 1 : -1, Time.deltaTime * 30);
+            if(controller.flying || controller.propeller || controller.inShell)
+            {
+                if (instant || wasTurnaround || controller.climbing) {
+                    models.transform.rotation = Quaternion.Euler(targetEuler);
+                } else {
+                   float maxRotation = 2000f * Time.deltaTime;
+                    float x = models.transform.eulerAngles.x, y = models.transform.eulerAngles.y, z = models.transform.eulerAngles.z;
+                    x += Mathf.Clamp(targetEuler.x - x, -maxRotation, maxRotation);
+                    y += Mathf.Clamp(targetEuler.y - y, -maxRotation, maxRotation);
+                    z += Mathf.Clamp(targetEuler.z - z, -maxRotation, maxRotation);
+                    models.transform.rotation = Quaternion.Euler(x, y, z);
+                }
+            }
+            else
+            {
+                models.transform.rotation = Quaternion.Euler(0, 180, 0);
+            }
+            animator.SetLayerWeight(1, 1 - (direction / 2 + .5f));
+            if (controller.goomba)
+            {
+                models.transform.localScale = new Vector3(Mathf.Abs(models.transform.localScale.x) * (controller.facingRight ? 1 : -1), models.transform.localScale.y, models.transform.localScale.z);
             }
 
             if (changeFacing)
@@ -297,7 +296,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             if(controller.holding   != null)
                 animator.SetBool("holdingwake", controller.holding.wakeupTimer < 1.5f);
             //animator.SetBool("head carry", controller.holding != null && controller.holding is FrozenCube);
-            animator.SetLayerWeight(1, (controller.holding != null && controller.holding is FrozenCube) ? 1 : 0);
+            animator.SetLayerWeight(2, (controller.holding != null && controller.holding is FrozenCube) ? 1 : 0);
             animator.SetBool("pipe", controller.pipeEntering != null);
             animator.SetBool("blueshell", controller.state == Enums.PowerupState.BlueShell);
             animator.SetBool("mini", controller.state == Enums.PowerupState.MiniMushroom);

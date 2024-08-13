@@ -15,7 +15,6 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     public enum wonderBadge
     {
         None, //added
-        GrappleVine, 
         HighJump, //added
         SpinPlus, //added
         Climb, //added
@@ -1079,13 +1078,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             inShell = false;
             twirlDelay = 0.5f / animator.speed;
             twirlTimer = 0.25f / animator.speed;
-            if(!DoesHaveBadge(wonderBadge.GrappleVine) || vined)
-                animator.SetTrigger("Twirl");
-            else
-            {
-                animator.SetTrigger("vine");
-                vined = true;
-            }
+            animator.SetTrigger("Twirl");
             photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Sound_Twirl);
         }
     }
@@ -3949,7 +3942,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         if (holding is FrozenCube) {
             holding.holderOffset = new(0, MainHitbox.size.y * (1f - Utils.QuadraticEaseOut(1f - (pickupTimer / pickupTime))) * transform.localScale.y, -2);
         } else {
-            holding.holderOffset = new((animator.bodyRotation * Vector3.back).x * 0.25f * transform.localScale.x * (facingRight ? 1 : -1), (state >= Enums.PowerupState.Mushroom ? 0.5f : 0.25f) * transform.localScale.y, (animator.bodyRotation * Vector3.back).z);
+            holding.holderOffset = new((animator.bodyRotation * Vector3.back).x * 0.25f * transform.localScale.x, (state >= Enums.PowerupState.Mushroom ? 0.5f : 0.25f) * transform.localScale.y, (animator.bodyRotation * Vector3.back).z);
         }
     }
 
