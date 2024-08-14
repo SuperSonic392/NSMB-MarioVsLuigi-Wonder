@@ -606,7 +606,10 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
         }
     }
 
-    private IEnumerator EndGame(Player winner) {
+    private IEnumerator EndGame(Player winner)
+    {
+        Time.timeScale = 1;
+        music.outputAudioMixerGroup.audioMixer.SetFloat("MasterPitch", 1);
         PhotonNetwork.CurrentRoom.SetCustomProperties(new() { [Enums.NetRoomProperties.GameStarted] = false });
         gameover = true;
         music.Stop();

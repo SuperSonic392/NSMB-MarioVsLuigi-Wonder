@@ -14,28 +14,28 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     public float shockTimer;
     public enum wonderBadge
     {
-        None, //added
+        None, //added (duh)
         HighJump, //added
         SpinPlus, //added
         Climb, //added
         SMB2, //added
-        timedJump, //added
+        TimedJump, //added
         SuperMushroom, //added
         JetRun, //added
         Invis, //added
-        OneHitHero, //added
+        OneHitWonder, //added
         Magnet, //added
-        AllFireFlower, //added
-        AllIceFlower, //added
-        AllPropellerMushroom, //added
-        AllBlueShell, //added
-        AllMiniMushroom, //added
-        AllDrillMushroom, //added
+        AllFirePower, //added
+        AllIcePower, //added
+        AllPropellerPower, //added
+        AllBlueShellPower, //added
+        AllMiniPower, //added
+        AllDrillPower, //added
         GoombaProtection, //added
         Lightweight, //added
-        Migit, //adding
+        Midgit, //added
         Random, //added
-        PrinceChoice //added
+        AutoPick //was called PrinceChoice, I forget exactly why, but it probably had to do with Prince Florian.
     }
     public float wallJumpDelay;
     public float stoopCharge;
@@ -372,7 +372,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     [PunRPC]
     public void EquipBadge(int badge, int id, int badgeid)
     {
-        if(badge == (int)wonderBadge.PrinceChoice)
+        if(badge == (int)wonderBadge.AutoPick)
         {
             badge = (int)GameManager.Instance.reccomendedBadge;
         }
@@ -491,7 +491,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         {
             wonderOwner = !wonderOwner;
         }
-        if(DoesHaveBadge(wonderBadge.Migit))
+        if(DoesHaveBadge(wonderBadge.Midgit))
         {
             big = false;
             small = true;
@@ -1124,7 +1124,6 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             } else {
                 return;
             }
-
                     string append = "";
                     if (small)
                     {
@@ -1154,7 +1153,6 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                     {
                         animator.SetTrigger("fireball"); //right handed throw
                     }
-            wallJumpTimer = 0;
             break;
         }
         case Enums.PowerupState.PropellerMushroom: {
@@ -1258,7 +1256,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         bool reserve = cp.statePriority > pp.itemPriority || state == newState;
         bool soundPlayed = false;
         Enums.Sounds sfx = powerup.soundEffect;
-        if(DoesHaveBadge(wonderBadge.AllMiniMushroom) && powerup.prefab != "Star" && powerup.state != Enums.PowerupState.MegaMushroom)
+        if(DoesHaveBadge(wonderBadge.AllMiniPower) && powerup.prefab != "Star" && powerup.state != Enums.PowerupState.MegaMushroom)
         {
             sfx = Enums.Sounds.Powerup_MiniMushroom_Collect;
         }
@@ -1328,27 +1326,27 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                 storedPowerup = (Powerup) Resources.Load("Scriptables/Powerups/" + state);
             }
             previousState = state;
-            if (DoesHaveBadge(wonderBadge.AllFireFlower) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            if (DoesHaveBadge(wonderBadge.AllFirePower) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.FireFlower;
             }
-            else if(DoesHaveBadge(wonderBadge.AllIceFlower) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            else if(DoesHaveBadge(wonderBadge.AllIcePower) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.IceFlower;
             }
-            else if(DoesHaveBadge(wonderBadge.AllPropellerMushroom) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            else if(DoesHaveBadge(wonderBadge.AllPropellerPower) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.PropellerMushroom;
             }
-            else if(DoesHaveBadge(wonderBadge.AllBlueShell) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            else if(DoesHaveBadge(wonderBadge.AllBlueShellPower) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.BlueShell;
             }
-            else if (DoesHaveBadge(wonderBadge.AllMiniMushroom) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            else if (DoesHaveBadge(wonderBadge.AllMiniPower) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.MiniMushroom;
             }
-            else if (DoesHaveBadge(wonderBadge.AllDrillMushroom) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
+            else if (DoesHaveBadge(wonderBadge.AllDrillPower) && powerup.state != Enums.PowerupState.MegaMushroom && powerup.state != Enums.PowerupState.Mushroom)
             {
                 state = Enums.PowerupState.DrillMushroom;
             }
@@ -1380,7 +1378,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     public void Powerdown(bool ignoreInvincible) {
         if (!ignoreInvincible && (hitInvincibilityCounter > 0 || invincible > 0))
             return;
-        if(DoesHaveBadge(wonderBadge.OneHitHero) || goomba)
+        if(DoesHaveBadge(wonderBadge.OneHitWonder) || goomba)
         {
             photonView.RPC(nameof(Death), RpcTarget.All, false, false);
             propeller = false;
@@ -1406,11 +1404,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             SpawnStars(1, false);
             break;
         }
-        case Enums.PowerupState.FireFlower:
-        case Enums.PowerupState.IceFlower:
-        case Enums.PowerupState.PropellerMushroom:
-        case Enums.PowerupState.DrillMushroom:
-        case Enums.PowerupState.BlueShell: {
+        default: {
             state = Enums.PowerupState.Mushroom;
             powerupFlash = 2f;
             SpawnStars(1, false);
@@ -1835,27 +1829,27 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         }
         else
         {
-            if (DoesHaveBadge(wonderBadge.AllFireFlower))
+            if (DoesHaveBadge(wonderBadge.AllFirePower))
             {
                 state = Enums.PowerupState.FireFlower;
             }
-            else if (DoesHaveBadge(wonderBadge.AllIceFlower))
+            else if (DoesHaveBadge(wonderBadge.AllIcePower))
             {
                 state = Enums.PowerupState.IceFlower;
             }
-            else if (DoesHaveBadge(wonderBadge.AllPropellerMushroom))
+            else if (DoesHaveBadge(wonderBadge.AllPropellerPower))
             {
                 state = Enums.PowerupState.PropellerMushroom;
             }
-            else if (DoesHaveBadge(wonderBadge.AllBlueShell))
+            else if (DoesHaveBadge(wonderBadge.AllBlueShellPower))
             {
                 state = Enums.PowerupState.BlueShell;
             }
-            else if (DoesHaveBadge(wonderBadge.AllMiniMushroom))
+            else if (DoesHaveBadge(wonderBadge.AllMiniPower))
             {
                 state = Enums.PowerupState.MiniMushroom;
             }
-            else if (DoesHaveBadge(wonderBadge.AllDrillMushroom))
+            else if (DoesHaveBadge(wonderBadge.AllDrillPower))
             {
                 state = Enums.PowerupState.DrillMushroom;
             }
@@ -2582,7 +2576,8 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         HandleWallSlideChecks(currentWallDirection, holdingRight, holdingLeft);
 
         wallSlideRight &= wallSlideTimer > 0 && hitRight;
-        wallSlideLeft &= wallSlideTimer > 0 && hitLeft; if (wallSlideLeft || wallSlideRight)
+        wallSlideLeft &= wallSlideTimer > 0 && hitLeft; 
+        if (wallSlideLeft || wallSlideRight)
         {
             propeller = false;
             Spinning = false;
@@ -2789,7 +2784,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                     joystick.y = 0;
                 }
             }
-            if (DoesHaveBadge(wonderBadge.timedJump) && landing < 0.25f)
+            if (DoesHaveBadge(wonderBadge.TimedJump) && landing < 0.25f)
             {
                 vel *= 1.05f;
                 animator.SetTrigger("Celebrate");

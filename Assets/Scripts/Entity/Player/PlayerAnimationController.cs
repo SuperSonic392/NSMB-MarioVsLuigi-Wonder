@@ -6,6 +6,7 @@ using NSMB.Utils;
 
 public class PlayerAnimationController : MonoBehaviourPun {
 
+    private float animationTime, animationSpeed;
     [SerializeField] private Avatar smallAvatar, largeAvatar, kuriboAvatar;
     [SerializeField] private ParticleSystem dust, sparkles, drillParticle, giantParticle, fireParticle;
     [SerializeField] public GameObject models, smallModel, largeModel, kuriboModel, largeShellExclude, blueShell, propellerHelmet, propeller, drillHelmet;
@@ -221,6 +222,11 @@ public class PlayerAnimationController : MonoBehaviourPun {
             animator.SetFloat("velocityX", controller.body.velocity.magnitude);
             animator.SetFloat("velocityY", controller.joystick.y);
         }
+        if(animator.GetCurrentAnimatorStateInfo(0).speed > 0)
+            animationSpeed = animator.GetCurrentAnimatorStateInfo(0).speed;
+        AnimationClip clip = animator.GetCurrentAnimatorClipInfo(0)[0].clip;
+        animationTime += (animationSpeed / (clip == null ? 1 : clip.length)) * animator.GetFloat("velocityX") * Time.deltaTime;
+        animator.SetFloat("animationTime", animationTime);
     }
     private void SetParticleEmission(ParticleSystem particle, bool value) {
         if (value) {

@@ -31,7 +31,7 @@ namespace NSMB.Utils {
                 case PlayerController.wonderBadge.SMB2:
                     ret = "Crouching High Jump";
                     break;
-                case PlayerController.wonderBadge.timedJump:
+                case PlayerController.wonderBadge.TimedJump:
                     ret = "Timed High Jump";
                     break;
                 case PlayerController.wonderBadge.SuperMushroom:
@@ -46,22 +46,22 @@ namespace NSMB.Utils {
                 case PlayerController.wonderBadge.Magnet:
                     ret = "Coin Magnet";
                     break;
-                case PlayerController.wonderBadge.AllFireFlower:
+                case PlayerController.wonderBadge.AllFirePower:
                     ret = "All Fire Power";
                     break;
-                case PlayerController.wonderBadge.AllIceFlower:
+                case PlayerController.wonderBadge.AllIcePower:
                     ret = "All Ice Power";
                     break;
-                case PlayerController.wonderBadge.AllPropellerMushroom:
+                case PlayerController.wonderBadge.AllPropellerPower:
                     ret = "All Propeller Power";
                     break;
-                case PlayerController.wonderBadge.AllBlueShell:
+                case PlayerController.wonderBadge.AllBlueShellPower:
                     ret = "All Shell Power";
                     break;
-                case PlayerController.wonderBadge.AllMiniMushroom:
+                case PlayerController.wonderBadge.AllMiniPower:
                     ret = "All Mini Power";
                     break;
-                case PlayerController.wonderBadge.AllDrillMushroom:
+                case PlayerController.wonderBadge.AllDrillPower:
                     ret = "All Drill Power";
                     break;
                 case PlayerController.wonderBadge.GoombaProtection:
@@ -70,13 +70,13 @@ namespace NSMB.Utils {
                 case PlayerController.wonderBadge.Lightweight:
                     ret = "Lightweight Jump";
                     break;
-                case PlayerController.wonderBadge.Migit:
+                case PlayerController.wonderBadge.Midgit:
                     ret = "Midgit";
                     break;
                 case PlayerController.wonderBadge.Random:
                     ret = "Random";
                     break;
-                case PlayerController.wonderBadge.PrinceChoice:
+                case PlayerController.wonderBadge.AutoPick:
                     ret = "Automatic Choice";
                     break;
                 default:

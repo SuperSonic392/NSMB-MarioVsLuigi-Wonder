@@ -36,7 +36,7 @@ public class PlayerGhost : MonoBehaviour
             me.speed = 0;
             return;
         }
-        if (target.DoesHaveBadge(PlayerController.wonderBadge.Migit))
+        if (target.DoesHaveBadge(PlayerController.wonderBadge.Midgit))
         {
             transform.localScale = Vector3.one / 2;
         }
