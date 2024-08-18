@@ -518,6 +518,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
         bool gameStarting = startTimestamp - PhotonNetwork.ServerTimestamp > 0;
 
         StartCoroutine(BigStarRespawn(false));
+        StartCoroutine(WonderFlowerRespawn(false));
 
         if (PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode) {
             //clear buffered loading complete events.

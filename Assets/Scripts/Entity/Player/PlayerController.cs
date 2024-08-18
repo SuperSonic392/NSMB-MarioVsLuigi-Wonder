@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         GoombaProtection, //added
         Lightweight, //added
         Midgit, //added
+        StickyFeet, //uhh, bad name I think. 
         Random, //added
         AutoPick //was called PrinceChoice, I forget exactly why, but it probably had to do with Prince Florian.
     }
@@ -307,7 +308,8 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     public void Start() {
         if(GameManager.Instance.forceLives > 0)
         {
-            lives = GameManager.Instance.forceLives;
+            if(lives <= 0)
+                lives = GameManager.Instance.forceLives;
         }
         space = FindObjectOfType<space>() != null;
         if(FindObjectOfType<BadgeManager>() != null)
@@ -441,6 +443,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     }
     void Update()
     {
+        madeFootstepThisFrame = false;
         if (holding)
             SetHoldingOffset();
     }
@@ -538,7 +541,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             TickCounters();
             if (GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Slip)
             {
-                onIce = true;
+                onIce = !DoesHaveBadge(wonderBadge.StickyFeet);
             }
             HandleMovement(Time.fixedDeltaTime);
             HandleGiantTiles(true);
@@ -641,11 +644,11 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                 continue;
             if (tile is TileWithProperties propTile) {
                 footstepSound = propTile.footstepSound;
-                onIce = propTile.iceSkidding;
+                onIce = propTile.iceSkidding && !DoesHaveBadge(wonderBadge.StickyFeet);
             }
             if (tile is BreakableBrickTile brickTile)
             {
-                onIce = brickTile.iceSkidding;
+                onIce = brickTile.iceSkidding && !DoesHaveBadge(wonderBadge.StickyFeet);
             }
         }
     }
@@ -1952,11 +1955,12 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         PlaySound(Enums.Sounds.Powerup_MegaMushroom_Walk, (byte) (step ? 1 : 2));
         step = !step;
     }
-
+    private bool madeFootstepThisFrame = false;
     protected void Footstep() {
-        if (state == Enums.PowerupState.MegaMushroom)
+        if (state == Enums.PowerupState.MegaMushroom || madeFootstepThisFrame)
             return;
 
+        madeFootstepThisFrame = true;
         bool right = joystick.x > analogDeadzone;
         bool left = joystick.x < -analogDeadzone;
         bool reverse = body.velocity.x != 0 && ((left ? 1 : -1) == Mathf.Sign(body.velocity.x));
@@ -2922,15 +2926,26 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                             }
                         } else if (speed > SPEED_STAGE_MAX[RUN_STAGE]) {
                             acc = SKIDDING_STAR_DEC;
+                            if (DoesHaveBadge(wonderBadge.StickyFeet))
+                            {
+                                acc *= 2;
+                            }
                         }  else {
                             acc = SKIDDING_DEC;
-                            if(Mathf.Abs(body.velocity.x) < 2)
+                            if(DoesHaveBadge(wonderBadge.StickyFeet))
                             {
-                                acc /= 2;
+                                acc *= 2;
                             }
-                            if(Mathf.Abs(body.velocity.x) < 1)
+                            else
                             {
-                                acc /= 2;
+                                if (Mathf.Abs(body.velocity.x) < 2)
+                                {
+                                    acc /= 2;
+                                }
+                                if (Mathf.Abs(body.velocity.x) < 1)
+                                {
+                                    acc /= 2;
+                                }
                             }
                         }
                         turnaroundFrames = 0;
@@ -2944,6 +2959,10 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                         } else {
                             turnaroundFrames = Mathf.Min(turnaroundFrames + 0.2f, WALK_TURNAROUND_ACC.Length - 1);
                             acc = state == Enums.PowerupState.MegaMushroom ? WALK_TURNAROUND_MEGA_ACC[(int) turnaroundFrames] : WALK_TURNAROUND_ACC[(int) turnaroundFrames];
+                            if (DoesHaveBadge(wonderBadge.StickyFeet))
+                            {
+                                acc *= 2;
+                            }
                         }
                     }
                 } else {
@@ -3900,6 +3919,10 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         if(mtl && !DoesHaveBadge(wonderBadge.Lightweight))
         {
             terminalVelocityModifier *= 2;
+        }
+        if (DoesHaveBadge(wonderBadge.Lightweight))
+        {
+            terminalVelocityModifier *= .75f;
         }
         if (flying) {
             if (drill) {

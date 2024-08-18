@@ -226,6 +226,8 @@ public class PlayerAnimationController : MonoBehaviourPun {
             animationSpeed = animator.GetCurrentAnimatorStateInfo(0).speed;
         AnimationClip clip = animator.GetCurrentAnimatorClipInfo(0)[0].clip;
         animationTime += (animationSpeed / (clip == null ? 1 : clip.length)) * animator.GetFloat("velocityX") * Time.deltaTime;
+        if (float.IsInfinity(animationTime) || float.IsNaN(animationTime))
+            animationTime = 0;
         animator.SetFloat("animationTime", animationTime);
     }
     private void SetParticleEmission(ParticleSystem particle, bool value) {
