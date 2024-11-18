@@ -909,7 +909,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                 {
                     if (!photonView.IsMine)
                         return;
-                    photonView.RPC(nameof(SetWonderEffect), RpcTarget.All, GameManager.Instance.PossibleEffects[Random.Range(0, GameManager.Instance.PossibleEffects.Count)], Random.Range(0, GameManager.Instance.backfireChance) < 2);
+                    photonView.RPC(nameof(SetWonderEffect), RpcTarget.All, GameManager.Instance.PossibleEffects[Random.Range(0, GameManager.Instance.PossibleEffects.Count)], Random.Range(0, GameManager.Instance.backfireChance) < 2); //dear Turnip, for a 50% chance, replace backfireChance with 2, for a 1 in 2 chance 
                     return;
                 }
         }

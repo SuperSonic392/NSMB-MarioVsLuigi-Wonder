@@ -40,7 +40,7 @@ public class WonderFlower : MonoBehaviourPun
     {
         if(collected) //woah bucko! we shouldn't even be able to do that. 
         {
-            return; //hopefully this code should never be reached.
+            return; //hopefully this return should never be reached.
         }
         box.enabled = false;
         anim.SetTrigger("get");
