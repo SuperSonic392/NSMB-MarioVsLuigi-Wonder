@@ -5,4 +5,5 @@ public class PlayerData : ScriptableObject {
     public string soundFolder, prefab, uistring;
     public Sprite loadingSmallSprite, loadingBigSprite, readySprite;
     public RuntimeAnimatorController smallOverrides, largeOverrides, kuriboOverrides;
+    public bool useColors;
 }

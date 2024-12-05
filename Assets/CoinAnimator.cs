@@ -12,5 +12,9 @@ public class CoinAnimator : MonoBehaviour
         {
             coin.SetBool("Wonder", GameManager.Instance.currentWonderEffect != GameManager.WonderEffect.None);
         }
+        else if (coin != null)
+        {
+            coin.SetBool("Wonder", true);
+        }
     }
 }

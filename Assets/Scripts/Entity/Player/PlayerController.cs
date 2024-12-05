@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 using Photon.Pun;
 using ExitGames.Client.Photon;
 using NSMB.Utils;
+using JetBrains.Annotations;
 
 public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSerializeView, IOnPhotonViewPreNetDestroy {
 
@@ -35,7 +36,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         GoombaProtection, //added
         Lightweight, //added
         Midgit, //added
-        StickyFeet, //uhh, bad name I think. 
+        AntiIce, //uhh, bad name I think. 
         Random, //added
         AutoPick //was called PrinceChoice, I forget exactly why, but it probably had to do with Prince Florian. edit: now I know. why wasn't Random called that?
     }
@@ -322,7 +323,12 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             {
                 if(FindObjectOfType<BadgeManager>().badge1 == wonderBadge.Random)
                 {
-                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, Random.Range(1, (int)wonderBadge.Random - 1), photonView.ViewID, 1);
+                    int badge = Random.Range(1, (int)wonderBadge.Random - 1);
+                    if(IsBadgeOP((wonderBadge)badge))
+                    {
+                        badge++;
+                    }
+                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, badge, photonView.ViewID, 1);
                 }
                 else
                 {
@@ -330,7 +336,12 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                 }
                 if (FindObjectOfType<BadgeManager>().badge2 == wonderBadge.Random)
                 {
-                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, Random.Range(1, (int)wonderBadge.Random - 1), photonView.ViewID, 2);
+                    int badge = Random.Range(1, (int)wonderBadge.Random - 1);
+                    if (IsBadgeOP((wonderBadge)badge))
+                    {
+                        badge++;
+                    }
+                    photonView.RPC(nameof(EquipBadge), RpcTarget.All, badge, photonView.ViewID, 2);
                 }
                 else
                 {
@@ -554,7 +565,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
             TickCounters();
             if (GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.Slip)
             {
-                onIce = !DoesHaveBadge(wonderBadge.StickyFeet);
+                onIce = !DoesHaveBadge(wonderBadge.AntiIce);
             }
             HandleMovement(Time.fixedDeltaTime);
             HandleGiantTiles(true);
@@ -668,11 +679,11 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                 continue;
             if (tile is TileWithProperties propTile) {
                 footstepSound = propTile.footstepSound;
-                onIce = propTile.iceSkidding && !DoesHaveBadge(wonderBadge.StickyFeet);
+                onIce = propTile.iceSkidding && !DoesHaveBadge(wonderBadge.AntiIce);
             }
             if (tile is BreakableBrickTile brickTile)
             {
-                onIce = brickTile.iceSkidding && !DoesHaveBadge(wonderBadge.StickyFeet);
+                onIce = brickTile.iceSkidding && !DoesHaveBadge(wonderBadge.AntiIce);
             }
         }
     }
@@ -1467,7 +1478,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     #region -- FREEZING --
     [PunRPC]
     public void Freeze(int cube) {
-        if (knockback || hitInvincibilityCounter > 0 || invincible > 0 || Frozen || state == Enums.PowerupState.MegaMushroom)
+        if (knockback || hitInvincibilityCounter > 0 || invincible > 0 || Frozen || state == Enums.PowerupState.MegaMushroom || DoesHaveBadge(wonderBadge.AntiIce))
             return;
 
         PlaySound(Enums.Sounds.Enemy_Generic_Freeze);
@@ -2956,26 +2967,15 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                             }
                         } else if (speed > SPEED_STAGE_MAX[RUN_STAGE]) {
                             acc = SKIDDING_STAR_DEC;
-                            if (DoesHaveBadge(wonderBadge.StickyFeet))
-                            {
-                                acc *= 2;
-                            }
                         }  else {
                             acc = SKIDDING_DEC;
-                            if(DoesHaveBadge(wonderBadge.StickyFeet))
+                            if (Mathf.Abs(body.velocity.x) < 2)
                             {
-                                acc *= 2;
+                                acc /= 2;
                             }
-                            else
+                            if (Mathf.Abs(body.velocity.x) < 1)
                             {
-                                if (Mathf.Abs(body.velocity.x) < 2)
-                                {
-                                    acc /= 2;
-                                }
-                                if (Mathf.Abs(body.velocity.x) < 1)
-                                {
-                                    acc /= 2;
-                                }
+                                acc /= 2;
                             }
                         }
                         turnaroundFrames = 0;
@@ -2989,10 +2989,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                         } else {
                             turnaroundFrames = Mathf.Min(turnaroundFrames + 0.2f, WALK_TURNAROUND_ACC.Length - 1);
                             acc = state == Enums.PowerupState.MegaMushroom ? WALK_TURNAROUND_MEGA_ACC[(int) turnaroundFrames] : WALK_TURNAROUND_ACC[(int) turnaroundFrames];
-                            if (DoesHaveBadge(wonderBadge.StickyFeet))
-                            {
-                                acc *= 2;
-                            }
+
                         }
                     }
                 } else {
@@ -4164,5 +4161,10 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     public bool DoesHaveBadge(wonderBadge badge)
     {
         return badge1 == badge || badge2 == badge;
+    }
+
+    public static bool IsBadgeOP(wonderBadge badge)
+    {
+        return badge == wonderBadge.AllIcePower || badge == wonderBadge.Midgit;
     }
 }

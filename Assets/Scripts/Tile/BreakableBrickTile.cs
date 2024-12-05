@@ -10,14 +10,14 @@ public class BreakableBrickTile : InteractableTile {
     protected bool BreakBlockCheck(MonoBehaviour interacter, InteractionDirection direction, Vector3 worldLocation) {
         bool doBump = false, doBreak = false, giantBreak = false;
         if (interacter is PlayerController pl) {
-            if (pl.state <= Enums.PowerupState.Small && !pl.drill) {
+            if ((pl.state <= Enums.PowerupState.Small || pl.DoesHaveBadge(PlayerController.wonderBadge.Midgit)) && !pl.drill) {
                 doBreak = breakableBySmallMario || pl.big;
                 doBump = true;
-            } else if (pl.state == Enums.PowerupState.MegaMushroom || (pl.state == Enums.PowerupState.DrillMushroom && pl.groundpound)) {
+            } else if ((pl.state == Enums.PowerupState.MegaMushroom && !pl.DoesHaveBadge(PlayerController.wonderBadge.Midgit)) || (pl.state == Enums.PowerupState.DrillMushroom && pl.groundpound)) {
                 doBreak = breakableByGiantMario || pl.big;
                 giantBreak = true;
                 doBump = false;
-            } else if (pl.state >= Enums.PowerupState.Mushroom || pl.drill) {
+            } else if ((pl.state >= Enums.PowerupState.Mushroom && !pl.DoesHaveBadge(PlayerController.wonderBadge.Midgit)) || pl.drill) {
                 doBreak = breakableByLargeMario || pl.big;
                 doBump = true;
             }

@@ -54,10 +54,13 @@ public class PlayerAnimationController : MonoBehaviourPun {
             if (!photonView.IsMine && !controller.DoesHaveBadge(PlayerController.wonderBadge.Invis))
                 GameManager.Instance.CreateNametag(controller);
 
-            PlayerColorSet colorSet = GlobalController.Instance.skins[(int) photonView.Owner.CustomProperties[Enums.NetPlayerProperties.PlayerColor]];
-            PlayerColors colors = colorSet.GetPlayerColors(controller.character);
-            primaryColor = colors.overallsColor.linear;
-            secondaryColor = colors.hatColor.linear;
+            if (controller.character.useColors)
+            {
+                PlayerColorSet colorSet = GlobalController.Instance.skins[(int)photonView.Owner.CustomProperties[Enums.NetPlayerProperties.PlayerColor]];
+                PlayerColors colors = colorSet.GetPlayerColors(controller.character);
+                primaryColor = colors.overallsColor.linear;
+                secondaryColor = colors.hatColor.linear;
+            }
         }
     }
     public Transform HeadTransform;

@@ -468,6 +468,16 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
     // Unity Stuff
     public void Start() {
 
+        //new starting stuff
+        BadgeManager BM = FindObjectOfType<BadgeManager>();
+        if (PlayerController.IsBadgeOP(BM.badge1))
+        {
+            OnEquippedOPBadge();
+        }
+        if (PlayerController.IsBadgeOP(BM.badge2))
+        {
+            OnEquippedOPBadgeSlot2();
+        }
         /*
          * dear god this needs a refactor. does every UI element seriously have to have
          * their callbacks into this one fuckin script?
@@ -609,6 +619,8 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
 
             PhotonNetwork.Disconnect();
         }
+        PlayerData data = Utils.GetCharacterData();
+        colorManager.GetComponent<Button>().interactable = data.useColors;
     }
 
     IEnumerator UpdatePing() {
@@ -977,6 +989,8 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
         PhotonNetwork.CreateRoom(roomName, options, TypedLobby.Default);
         createLobbyPrompt.SetActive(false);
         ChangeMaxPlayers(players);
+        PlayerData data = Utils.GetCharacterData();
+        colorManager.GetComponent<Button>().interactable = data.useColors;
     }
     public void ClearChat() {
         for (int i = 0; i < chatContent.transform.childCount; i++) {
@@ -1054,28 +1068,16 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
     }
 
     public void Kick(Player target) {
-        if (target.IsLocal) {
-            LocalChatMessage("While you can kick yourself, it's probably not what you meant to do.", Color.red);
-            return;
-        }
         PhotonNetwork.CloseConnection(target);
         LocalChatMessage($"Successfully kicked {target.GetUniqueNickname()}", Color.red);
     }
 
     public void Promote(Player target) {
-        if (target.IsLocal) {
-            LocalChatMessage("You are already the host..?", Color.red);
-            return;
-        }
         PhotonNetwork.SetMasterClient(target);
         LocalChatMessage($"Promoted {target.GetUniqueNickname()} to be the host", Color.red);
     }
 
     public void Mute(Player target) {
-        if (target.IsLocal) {
-            LocalChatMessage("While you can mute yourself, it's probably not what you meant to do.", Color.red);
-            return;
-        }
         Utils.GetCustomProperty(Enums.NetRoomProperties.Mutes, out object[] mutes);
         List<object> mutesList = new(mutes);
         if (mutes.Contains(target.UserId)) {
@@ -1260,6 +1262,7 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
         Settings.Instance.SaveSettingsToPreferences();
 
         PlayerData data = GlobalController.Instance.characters[dropdown.value];
+        colorManager.GetComponent<Button>().interactable = data.useColors;
         sfx.PlayOneShot(Enums.Sounds.Player_Voice_Selected.GetClip(data));
         colorManager.ChangeCharacter(data);
 
@@ -1278,10 +1281,32 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
     public void SwapBadge(TMP_Dropdown dropdown)
     {
         FindObjectOfType<BadgeManager>().badge1 = (PlayerController.wonderBadge)dropdown.value;
+        badgeDropdown2.interactable = true;
+        if (PlayerController.IsBadgeOP((PlayerController.wonderBadge)dropdown.value))
+        {
+            OnEquippedOPBadge();
+        }
     }
     public void SwapBadge2(TMP_Dropdown dropdown)
     {
         FindObjectOfType<BadgeManager>().badge2 = (PlayerController.wonderBadge)dropdown.value;
+        badgeDropdown.interactable = true;
+        if (PlayerController.IsBadgeOP((PlayerController.wonderBadge)dropdown.value))
+        {
+            OnEquippedOPBadgeSlot2();
+        }
+    }
+    public void OnEquippedOPBadge()
+    {
+        FindObjectOfType<BadgeManager>().badge2 = PlayerController.wonderBadge.None;
+        badgeDropdown2.SetValueWithoutNotify(0);
+        badgeDropdown2.interactable = false;
+    }
+    public void OnEquippedOPBadgeSlot2()
+    {
+        FindObjectOfType<BadgeManager>().badge1 = PlayerController.wonderBadge.None;
+        badgeDropdown.SetValueWithoutNotify(0);
+        badgeDropdown.interactable = false;
     }
 
     public void SetPlayerColor(int index) {

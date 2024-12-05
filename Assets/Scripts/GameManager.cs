@@ -402,7 +402,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
             PhotonNetwork.RaiseEvent((byte) Enums.NetEventIds.SyncTilemap, changes, options, SendOptions.SendReliable);
 
             foreach (GameObject coin in coins) {
-                if (!coin.GetComponent<SpriteRenderer>().enabled)
+                if (!coin.GetComponentInChildren<SpriteRenderer>().enabled)
                     PhotonNetwork.RaiseEvent((byte) Enums.NetEventIds.SetCoinState, new object[] { coin.GetPhotonView().ViewID, false }, options, SendOptions.SendReliable);
             }
         }
