@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
     #region Variables
     public float shockTimer;
+    public AudioSource spinJumpSource;
     public enum wonderBadge
     {
         None, //added (duh)
@@ -36,7 +37,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         Midgit, //added
         StickyFeet, //uhh, bad name I think. 
         Random, //added
-        AutoPick //was called PrinceChoice, I forget exactly why, but it probably had to do with Prince Florian.
+        AutoPick //was called PrinceChoice, I forget exactly why, but it probably had to do with Prince Florian. edit: now I know. why wasn't Random called that?
     }
     public float wallJumpDelay;
     public float stoopCharge;
@@ -306,7 +307,10 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
     }
 
     public void Start() {
-        if(GameManager.Instance.forceLives > 0)
+        spinJumpSource = gameObject.AddComponent<AudioSource>();
+        spinJumpSource.clip = Enums.Sounds.Player_Sound_Spinjump.GetClip();
+        spinJumpSource.outputAudioMixerGroup = sfx.outputAudioMixerGroup;
+        if (GameManager.Instance.forceLives > 0)
         {
             if(lives <= 0)
                 lives = GameManager.Instance.forceLives;
@@ -446,6 +450,15 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         madeFootstepThisFrame = false;
         if (holding)
             SetHoldingOffset();
+
+        if(Spinning && !spinJumpSource.isPlaying)
+        {
+            spinJumpSource.Play();
+        }
+        if(!Spinning && spinJumpSource.isPlaying)
+        {
+            spinJumpSource.Stop();
+        }
     }
     public bool big;
     public bool small;
@@ -560,6 +573,17 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         if(mtl && !DoesHaveBadge(wonderBadge.Lightweight))
         {
             body.gravityScale *= 2f;
+        }
+        if(DoesHaveBadge(wonderBadge.Lightweight))
+        {
+            if(body.velocity.y > 0)
+            {
+                body.gravityScale *= .9f;
+            }
+            else
+            {
+                body.gravityScale *= .75f;
+            }
         }
         if (DoesHaveBadge(wonderBadge.HighJump))
         {
@@ -779,7 +803,14 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
                         if (other.state == Enums.PowerupState.MiniMushroom && groundpounded) {
                             otherView.RPC(nameof(Powerdown), RpcTarget.All, false);
                         } else {
-                            otherView.RPC(nameof(Knockback), RpcTarget.All, otherObj.transform.position.x < body.position.x, groundpounded ? 3 : 1, false, photonView.ViewID);
+                                    if(other.state == Enums.PowerupState.DrillMushroom)
+                                    {
+                                        photonView.RPC(nameof(Knockback), RpcTarget.All, otherObj.transform.position.x < body.position.x, 1, false, otherView.ViewID);
+                                    }
+                                    else
+                                    {
+                                        otherView.RPC(nameof(Knockback), RpcTarget.All, otherObj.transform.position.x < body.position.x, groundpounded ? 3 : 1, false, photonView.ViewID);
+                                    }
                         }
                     }
                     body.velocity = new Vector2(previousFrameVelocity.x, body.velocity.y);
@@ -1097,8 +1128,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         body.velocity = new Vector2(body.velocity.x, 7);
         Spinning = true;
         doubleJumped = true;
-        koyoteTime = 99; //screw you vik
-        photonView.RPC(nameof(PlaySound), RpcTarget.All, Enums.Sounds.Player_Sound_Spinjump);
+        koyoteTime = 99; //screw you vik edit: refering to viktor? what happened here ._.
     }
     private void ActivatePowerupAction() {
         if (knockback || pipeEntering || GameManager.Instance.gameover || dead || Frozen || holding || goomba || shockTimer > 0 || climbing)
@@ -1550,7 +1580,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
         if (coinID != -1) {
             PhotonView coin = PhotonView.Find(coinID);
-            if (!coin || !coin.IsMine || !coin.GetComponent<SpriteRenderer>().enabled)
+            if (!coin || !coin.IsMine || !coin.GetComponentInChildren<SpriteRenderer>().enabled)
                 return;
 
             if (coin.GetComponent<LooseCoin>() is LooseCoin lc) {
@@ -1596,7 +1626,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
 
         PhotonView coin = PhotonView.Find(coinID);
         if (coin) {
-            coin.GetComponent<SpriteRenderer>().enabled = false;
+            coin.GetComponentInChildren<SpriteRenderer>().enabled = false;
             coin.GetComponent<BoxCollider2D>().enabled = false;
             if (coin.CompareTag("loosecoin") && coin.IsMine) {
                 //loose coin, just destroy
@@ -1629,7 +1659,7 @@ public class PlayerController : MonoBehaviourPun, IFreezableEntity, ICustomSeria
         PhotonView coin = PhotonView.Find(coinID);
         if (coin)
         {
-            coin.GetComponent<SpriteRenderer>().enabled = false;
+            coin.GetComponentInChildren<SpriteRenderer>().enabled = false;
             coin.GetComponent<BoxCollider2D>().enabled = false;
             if (coin.CompareTag("loosecoin") && coin.IsMine)
             {

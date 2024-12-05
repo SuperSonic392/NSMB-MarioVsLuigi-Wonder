@@ -66,4 +66,8 @@ public class BreakableBrickTile : InteractableTile {
         //Breaking block check.
         return BreakBlockCheck(interacter, direction, worldLocation);
     }
+
+    public bool doesWonderAnimation;
+    public Sprite[] AnimatedWonderSprites;
+    private Sprite[] OriginalAnim;
 }

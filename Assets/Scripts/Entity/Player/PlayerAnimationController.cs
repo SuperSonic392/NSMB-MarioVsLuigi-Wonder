@@ -176,6 +176,10 @@ public class PlayerAnimationController : MonoBehaviourPun {
             {
                 models.transform.localScale = new Vector3(Mathf.Abs(models.transform.localScale.x) * (controller.facingRight ? 1 : -1), models.transform.localScale.y, models.transform.localScale.z);
             }
+            else
+            {
+                models.transform.localScale = new Vector3(Mathf.Abs(models.transform.localScale.x), models.transform.localScale.y, models.transform.localScale.z);
+            }
 
             if (changeFacing)
                 controller.facingRight = models.transform.eulerAngles.y < 180;
@@ -224,11 +228,34 @@ public class PlayerAnimationController : MonoBehaviourPun {
         }
         if(animator.GetCurrentAnimatorStateInfo(0).speed > 0)
             animationSpeed = animator.GetCurrentAnimatorStateInfo(0).speed;
-        AnimationClip clip = animator.GetCurrentAnimatorClipInfo(0)[0].clip;
-        animationTime += (animationSpeed / (clip == null ? 1 : clip.length)) * animator.GetFloat("velocityX") * Time.deltaTime;
-        if (float.IsInfinity(animationTime) || float.IsNaN(animationTime))
-            animationTime = 0;
-        animator.SetFloat("animationTime", animationTime);
+        // Get the current clip info from layer 0
+        AnimatorClipInfo[] clipInfo = animator.GetCurrentAnimatorClipInfo(0);
+
+        // Check if there are any clips at all
+        if (clipInfo.Length > 0)
+        {
+            AnimationClip clip = clipInfo[0].clip;
+
+            if (clip != null)
+            {
+                // Only proceed with the logic if clip is not null
+                animationSpeed = animator.GetCurrentAnimatorStateInfo(0).speed;
+                animationTime += (animationSpeed / clip.length) * animator.GetFloat("velocityX") * Time.deltaTime;
+
+                // Ensure animationTime is valid
+                if (float.IsInfinity(animationTime) || float.IsNaN(animationTime))
+                    animationTime = 0;
+
+                // Set the animationTime parameter
+                animator.SetFloat("animationTime", animationTime);
+            }
+        }
+        else
+        {
+            // Handle the case where no clip is available
+            Debug.LogWarning("No animation clip is currently playing on layer 0.");
+        }
+
     }
     private void SetParticleEmission(ParticleSystem particle, bool value) {
         if (value) {

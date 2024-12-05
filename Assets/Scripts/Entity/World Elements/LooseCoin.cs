@@ -19,7 +19,7 @@ public class LooseCoin : MonoBehaviourPun {
 
     public void Start() {
         body = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         hitbox = GetComponent<BoxCollider2D>();
         physics = GetComponent<PhysicsEntity>();
         animator = GetComponent<Animator>();

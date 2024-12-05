@@ -33,6 +33,7 @@ public class FrozenCube : HoldableEntity {
             entityView = PhotonView.Find(id);
 
             entity = entityView.GetComponent<IFreezableEntity>();
+            PlayerController entityCon = entityView.GetComponent<PlayerController>();
             if (entity == null || (photonView.IsMine && entity.Frozen)) {
                 Destroy(gameObject);
                 return;
@@ -60,10 +61,19 @@ public class FrozenCube : HoldableEntity {
                     bounds.Encapsulate(renderer.bounds);
             }
 
-            hitbox.size = spriteRenderer.size = GetComponent<BoxCollider2D>().size = bounds.size;
-            hitbox.offset = Vector2.up * hitbox.size / 2;
+            if(entityCon == null)
+            {
+                hitbox.size = spriteRenderer.size = GetComponent<BoxCollider2D>().size = bounds.size;
+                hitbox.offset = Vector2.up * hitbox.size / 2;
+                entityPositionOffset = -(bounds.center - Vector3.up.Multiply(bounds.size / 2) - rendererObject.transform.position);
+            }
+            else
+            {
+                hitbox.size = spriteRenderer.size = GetComponent<BoxCollider2D>().size = entityCon.MainHitbox.size;
+                hitbox.offset = entityCon.MainHitbox.offset / 2;
+                entityPositionOffset = -entityCon.MainHitbox.offset / 2;
+            }
 
-            entityPositionOffset = -(bounds.center - Vector3.up.Multiply(bounds.size / 2) - rendererObject.transform.position);
 
             transform.position -= (Vector3) entityPositionOffset - Vector3.down * 0.1f;
 

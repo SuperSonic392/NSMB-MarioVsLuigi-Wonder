@@ -10,7 +10,8 @@ using Photon.Realtime;
 using ExitGames.Client.Photon;
 using NSMB.Utils;
 
-public class GlobalController : Singleton<GlobalController>, IInRoomCallbacks, ILobbyCallbacks {
+public class GlobalController : Singleton<GlobalController>, IInRoomCallbacks, ILobbyCallbacks
+{
 
     public PlayerColorSet[] skins;
     public Gradient rainbowGradient;
@@ -29,11 +30,13 @@ public class GlobalController : Singleton<GlobalController>, IInRoomCallbacks, I
     private int windowWidth, windowHeight;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public static void CreateInstance() {
+    public static void CreateInstance()
+    {
         Instantiate(Resources.Load("Prefabs/Static/GlobalController"));
     }
 
-    public void Awake() {
+    public void Awake()
+    {
         if (!InstanceCheck())
             return;
 
@@ -46,7 +49,8 @@ public class GlobalController : Singleton<GlobalController>, IInRoomCallbacks, I
 
 
     [Obsolete]
-    public void Start() {
+    public void Start()
+    {
         //Photon settings.
         PhotonPeer.RegisterType(typeof(NameIdPair), 69, NameIdPair.Serialize, NameIdPair.Deserialize);
         PhotonNetwork.SerializationRate = 30;
@@ -115,15 +119,18 @@ public class GlobalController : Singleton<GlobalController>, IInRoomCallbacks, I
     }
 #endif
 
-    public void Update() {
+    public void Update()
+    {
         int currentWidth = Screen.width;
         int currentHeight = Screen.height;
 
-        if (settings.ndsResolution && SceneManager.GetActiveScene().buildIndex != 0) {
-            float aspect = (float) currentWidth / currentHeight;
+        if (settings.ndsResolution && SceneManager.GetActiveScene().buildIndex != 0)
+        {
+            float aspect = (float)currentWidth / currentHeight;
             int targetHeight = 224;
-            int targetWidth = (int) (targetHeight * (settings.fourByThreeRatio ? (4/3f) : aspect));
-            if (ndsTexture == null || ndsTexture.width != targetWidth || ndsTexture.height != targetHeight) {
+            int targetWidth = (int)(targetHeight * (settings.fourByThreeRatio ? (4 / 3f) : aspect));
+            if (ndsTexture == null || ndsTexture.width != targetWidth || ndsTexture.height != targetHeight)
+            {
                 if (ndsTexture != null)
                     ndsTexture.Release();
                 ndsTexture = RenderTexture.GetTemporary(targetWidth, targetHeight);
@@ -131,7 +138,9 @@ public class GlobalController : Singleton<GlobalController>, IInRoomCallbacks, I
                 ndsTexture.graphicsFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.B10G11R11_UFloatPack32;
             }
             ndsCanvas.SetActive(true);
-        } else {
+        }
+        else
+        {
             ndsCanvas.SetActive(false);
         }
 
@@ -146,11 +155,13 @@ public class GlobalController : Singleton<GlobalController>, IInRoomCallbacks, I
 #endif
     }
 
-    public void OnPlayerEnteredRoom(Player newPlayer) {
+    public void OnPlayerEnteredRoom(Player newPlayer)
+    {
         NetworkUtils.nicknameCache.Remove(newPlayer.UserId);
     }
 
-    public void OnPlayerLeftRoom(Player otherPlayer) {
+    public void OnPlayerLeftRoom(Player otherPlayer)
+    {
         NetworkUtils.nicknameCache.Remove(otherPlayer.UserId);
     }
 
@@ -160,11 +171,13 @@ public class GlobalController : Singleton<GlobalController>, IInRoomCallbacks, I
 
     public void OnMasterClientSwitched(Player newMasterClient) { }
 
-    public void OnJoinedLobby() {
+    public void OnJoinedLobby()
+    {
         NetworkUtils.nicknameCache.Clear();
     }
 
-    public void OnLeftLobby() {
+    public void OnLeftLobby()
+    {
         NetworkUtils.nicknameCache.Clear();
     }
 

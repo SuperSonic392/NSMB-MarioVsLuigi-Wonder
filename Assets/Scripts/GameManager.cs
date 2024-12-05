@@ -17,6 +17,12 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 
 public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IConnectionCallbacks, IMatchmakingCallbacks {
 
+
+    [Header("Post Processes")]
+    public Material wonderPostProcess;
+    private float WonderPostProcessAlpha;
+
+
     [Header("HMM scripts")]
     public int forceLives = 0;
     public Enums.PowerupState spawnState;
@@ -34,6 +40,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
         Ghost,
         AllSmall,
         Slip,
+        StageSpecific
     }
     [Tooltip("gives a 1 in __ chance of backfire")]
     public int backfireChance = 10;
@@ -205,7 +212,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
 
             foreach (GameObject coin in coins) {
                 //dont use setactive cause it breaks animation cycles being syncewd
-                coin.GetComponent<SpriteRenderer>().enabled = true;
+                coin.GetComponentInChildren<SpriteRenderer>().enabled = true;
                 coin.GetComponent<BoxCollider2D>().enabled = true;
             }
 
@@ -652,7 +659,9 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
             yield break;
 
         bigwhile:
-        while (true) {
+        while (true)
+        {
+            Debug.Log("Spawning Star");
             if (remainingSpawns.Count <= 0)
                 remainingSpawns.AddRange(starSpawns);
 
@@ -663,11 +672,13 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
                 if (hit.gameObject.CompareTag("Player")) {
                     //cant spawn here
                     remainingSpawns.RemoveAt(index);
+                    Debug.Log("Star Blocked");
                     yield return new WaitForSeconds(0.2f);
                     goto bigwhile;
                 }
             }
 
+            Debug.Log("Star Spawned");
             PhotonNetwork.InstantiateRoomObject("Prefabs/BigStar", spawnPos, Quaternion.identity);
             remainingSpawns.RemoveAt(index);
             break;
@@ -780,8 +791,24 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
 
         if (musicEnabled)
             HandleMusic();
-    }
 
+        if(currentWonderEffect != WonderEffect.None && !gameover)
+        {
+            if (WonderBackfire)
+            {
+                WonderPostProcessAlpha = Mathf.Lerp(WonderPostProcessAlpha, -1, Time.deltaTime * 5);
+            }
+            else
+            {
+                WonderPostProcessAlpha = Mathf.Lerp(WonderPostProcessAlpha, 1, Time.deltaTime * 5);
+            }
+        }
+        else
+        {
+            WonderPostProcessAlpha = Mathf.Lerp(WonderPostProcessAlpha, 0, Time.deltaTime * 5);
+        }
+        wonderPostProcess.SetFloat("_EffectAlpha", WonderPostProcessAlpha);
+    }
     public void CreateNametag(PlayerController controller) {
         GameObject nametag = Instantiate(nametagPrefab, nametagPrefab.transform.parent);
         nametag.GetComponent<UserNametag>().parent = controller;
@@ -1026,5 +1053,8 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
             Gizmos.DrawIcon(starSpawn.transform.position, "WonderFlower", true, new Color(1, 1, 1, 0.5f));
         }
     }
-
+    public void OnDestroy()
+    {
+        wonderPostProcess.SetFloat("_EffectAlpha", 0);
+    }
 }
