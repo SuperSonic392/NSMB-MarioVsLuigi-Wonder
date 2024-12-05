@@ -11,7 +11,7 @@ Includes the 3 new custom levels (Giddy Sky, Sewers, and Ash), and a few custom 
 [Play now on itch.io!](https://hyperct.itch.io/nsmbvs-wonder)
 
 <details>
-  <summary><h2>Opening in Unity Editor</h2></summary>
+  <summary><h2>Opening in Unity Editor (Unchanged)</h2></summary>
 
 1. Install Unity 2022.1.9f1 (or newer) via Unity Hub (Installs > Install Editor > Scroll to bottom)
 2. Download and install [git](https://git-scm.com/downloads). Do NOT use the .zip download, as it will cause errors within Unity.
@@ -22,72 +22,3 @@ Includes the 3 new custom levels (Giddy Sky, Sewers, and Ash), and a few custom 
 6. Open the project in Unity Hub (gray "Open" button in top right)
 7. Change the Unity Editor to use your computer's platform in File > Build Settings
 8. Create a build using "Build and Run" inside File > Build Settings, or Ctrl+B
-
-</details>
-<details>
-  <summary><h2>Credits</h2></summary>
-
-### Original Content:
-* New Super Mario Bros.
-* New Super Mario Bros. Wii
-* Super Mario Maker 2
-* Super Mario Bros. Wonder
-
-### Contributors:
-* [@ipodtouch0218](https://github.com/ipodtouch0218)
-* @GradedWarrior
-* [@TheMoogle](https://github.com/TheMoogle) (base game)
-* [@Skillz](https://github.com/Skillz808) (base game)
-* [@skarph](https://github.com/skarph) (base game)
-* [@Zest](https://github.com/zestydevy) (base game)
-* [@kittenchilly](https://github.com/kittenchilly) (base game)
-* [@Amy54Desu](https://github.com/Amy54Desu) (base game)
-* [@Kraken](https://github.com/KrakHub) (base game)
-* [@ShadowWalker13](https://github.com/ShadowWalker13) (base game)
-* [@GithubSPerez](https://github.com/GithubSPerez) (base game)
-* [@mindnomad](https://github.com/mindnomad) (base game)
-* FrostyCake: stages
-* FBEthePoS: wonder flower minimap icon
-* KirbyKid: bunch of random doodler crap
-* MiiBumm (and the rest of the ccm gang): almost all the custom character models (all of them that aren't from doodler or original to this mod)
-* BlueSwitchPalace: Switch
-
-### Music:
-* [RENREN](https://mistajub.bandcamp.com/)
-
-### QA Testing:
-* TheCyVap
-* Shadow_Walker13
-  
-### Level Design:
-* FrostyCake
-* Skarph
-* TheCyVap
-* mindnomad
- 
-### Rippers:
-  
-* Demon2Warrior (Background)
-* VentureSonic (Background)
-* Keira (Background)
-* Ohthatguy (Background)
-* Poudink (Tiles)
-* Someone (Tiles)
-* Hiccup (Tiles)
-* Jouv (Tiles)
-* Mr-SUGOI (Tiles)
-* mindnomad (Tiles/Sound)
-* Symbolcom (Enemies)
-* Mr. C (Enemies)
-* Ragey (Enemies)
-* Technokami (Enemies)
-* A Refracted Swindler (UI)
-* Treeki (UI)
-* Double S (Models)
-* KartMakerBrosU (Models)
-* TeridaxXDOO1 (Models)
-* Skarph (Models/Sound)
-* LukeWarnut (Sound)
-* Luke Hackett (Sound)
-
-</details>
