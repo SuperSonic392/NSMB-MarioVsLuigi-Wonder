@@ -1,7 +1,7 @@
 # NSMB-vs-Wonder
 A mod of IpodTouch0218's NSMB-MarioVsLuigi that adds Wonder effects and badges from the hit new game Super Mario Bros. Wonder
 
-Includes the 3 new custom levels (Giddy Sky, Sewers, and Ash), and a few custom stages from other mods to battle on too!
+Includes a few new custom levels (e. g. Giddy Sky, Sewers, and Ash), and a few custom stages from other mods to battle on too!
 
 ## Discord
 [**Join the discord**](https://discord.gg/aShquSquNM) to keep up to date with the development of the game, make feature suggestions, report bugs (if you're too lazy to use issues...), get technical support, look for people to play with, and just talk about the game!
