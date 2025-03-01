@@ -63,6 +63,8 @@ public class MovingPowerup : MonoBehaviourPun {
     }
 
     public void LateUpdate() {
+
+        sRenderer.material.SetFloat("_Use8BitPowerup", GameManager.Instance.soRetro ? 1 : 0);
         ignoreCounter -= Time.deltaTime;
         if (!followMe)
             return;

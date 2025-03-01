@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Tilemaps;
 using UnityEngine.Audio;
 using UnityEngine.SceneManagement;
@@ -18,6 +19,8 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IConnectionCallbacks, IMatchmakingCallbacks {
 
 
+    public bool soRetro;
+    public string looseCoinPrefab = "Prefabs/LooseCoin", coinBlockParticlePrefab = "Prefabs/Particle/CoinFromBlock";
     [Header("Post Processes")]
     public Material wonderPostProcess;
     private float WonderPostProcessAlpha;
@@ -28,8 +31,9 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
     public Enums.PowerupState spawnState;
 
     [Header("Wonder Effects")]
-    public PlayerController.wonderBadge reccomendedBadge;
+    public PlayerController.WonderBadge reccomendedBadge;
     public List<WonderEffect> PossibleEffects = new List<WonderEffect>();
+    public UnityEvent OnStageSpecificWonderEffectStarted, OnStageSpecificWonderEffectEnded;
     public enum WonderEffect
     {
         None,
@@ -37,6 +41,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
         Small,
         Goomba,
         Time,
+        SpecialTime,
         Ghost,
         AllSmall,
         Slip,
@@ -72,7 +77,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
     public Tilemap tilemap;
     [ColorUsage(false)] public Color levelUIColor = new(24, 178, 170);
     public bool spawnBigPowerups = true, spawnVerticalPowerups = true;
-    public string levelDesigner = "", richPresenceId = "", levelName = "Unknown";
+    public string creditText = "Level designed by: ", levelDesigner = "", richPresenceId = "", levelName = "Unknown";
     private TileBase[] originalTiles;
     private BoundsInt origin;
     private GameObject[] starSpawns;
@@ -737,13 +742,39 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
                 Time.timeScale = 1.5f;
             }
         }
+        if(currentWonderEffect == WonderEffect.SpecialTime)
+        {
+            if (WonderBackfire)
+            {
+                Time.timeScale = 3f;
+            }
+            else
+            {
+                Time.timeScale = .5f;
+            }
+            foreach (PlayerController con in PlayerController.instances)
+            {
+                con.timeScale = 1 / Time.timeScale;
+            }
+        }
+        else
+        {
+            foreach (PlayerController con in PlayerController.instances)
+            {
+                con.timeScale = 1;
+            }
+        }
         if(wonderTimer > 0 && currentWonderEffect != WonderEffect.None)
         {
             wonderTimerText.gameObject.SetActive(true);
             wonderTimerText.text = Mathf.Ceil(wonderTimer).ToString();
             wonderTimer -= Time.unscaledDeltaTime;
-            if (wonderTimer <= 0 )
+            if (wonderTimer <= 0)
             {
+                if(currentWonderEffect == WonderEffect.StageSpecific)
+                {
+                    OnStageSpecificWonderEffectEnded.Invoke();
+                }
                 currentWonderEffect = WonderEffect.None;
                 wonderTimerText.gameObject.SetActive(false);
                 Time.timeScale = 1;
@@ -794,7 +825,7 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
 
         if(currentWonderEffect != WonderEffect.None && !gameover)
         {
-            if (WonderBackfire)
+            if (!localPlayer.GetComponent<PlayerController>().wonderOwner && currentWonderEffect != WonderEffect.Slip)
             {
                 WonderPostProcessAlpha = Mathf.Lerp(WonderPostProcessAlpha, -1, Time.deltaTime * 5);
             }
@@ -921,7 +952,14 @@ public class GameManager : MonoBehaviour, IOnEventCallback, IInRoomCallbacks, IC
             return;
 
         paused = !paused;
-        sfx.PlayOneShot(Enums.Sounds.UI_Pause.GetClip());
+        if (soRetro)
+        {
+            sfx.PlayOneShot(Enums.Sounds.UI_Pause_Retro.GetClip());
+        }
+        else
+        {
+            sfx.PlayOneShot(Enums.Sounds.UI_Pause.GetClip());
+        }
         pauseUI.SetActive(paused);
         pausePanel.SetActive(true);
         hostExitUI.SetActive(false);

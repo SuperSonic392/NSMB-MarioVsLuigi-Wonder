@@ -22,13 +22,35 @@ public class BlockBump : MonoBehaviour {
         anim.SetTrigger("start");
 
         if (resultPrefab == "Coin") {
-            GameObject coin = (GameObject) Instantiate(Resources.Load("Prefabs/Particle/CoinFromBlock"), transform.position + new Vector3(0,(fromAbove ? -0.25f : 0.5f)), Quaternion.identity);
-            coin.GetComponentInChildren<Animator>().SetBool("down", fromAbove);
+            if(GameManager.Instance.currentWonderEffect != GameManager.WonderEffect.None)
+            {
+                SpawnCoinSpatter(transform.position + new Vector3(0, (fromAbove ? -1 : 0)), 1);
+            }
+            else
+            {
+                GameObject coin = (GameObject)Instantiate(Resources.Load(GameManager.Instance.coinBlockParticlePrefab), transform.position + new Vector3(0, (fromAbove ? -0.25f : 0.5f)), Quaternion.identity);
+                coin.GetComponentInChildren<Animator>().SetBool("down", fromAbove);
+            }
         }
 
         BoxCollider2D hitbox = GetComponentInChildren<BoxCollider2D>();
         hitbox.size = sprite.bounds.size;
         hitbox.offset = (hitbox.size - Vector2.one) * new Vector2(1/2f, -1/2f);
+    }
+
+
+    public static void SpawnCoinSpatter(Vector2 position, uint amount)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                // Instantiate the coin with the offset
+                GameObject coin = PhotonNetwork.InstantiateRoomObject(GameManager.Instance.looseCoinPrefab, position + Vector2.up * 0.5f, Quaternion.identity);
+                // Apply force to the coin
+                coin.GetPhotonView().RPC("ApplyForce", RpcTarget.All, UnityEngine.Random.Range(-2f, 2f), UnityEngine.Random.Range(-1f, 2f));
+            }
+        }
     }
     #endregion
 

@@ -10,14 +10,14 @@ public class BreakableBrickTile : InteractableTile {
     protected bool BreakBlockCheck(MonoBehaviour interacter, InteractionDirection direction, Vector3 worldLocation) {
         bool doBump = false, doBreak = false, giantBreak = false;
         if (interacter is PlayerController pl) {
-            if ((pl.state <= Enums.PowerupState.Small || pl.DoesHaveBadge(PlayerController.wonderBadge.Midgit)) && !pl.drill) {
+            if ((pl.state <= Enums.PowerupState.Small || pl.DoesHaveBadge(PlayerController.WonderBadge.Midgit)) && !pl.drill) {
                 doBreak = breakableBySmallMario || pl.big;
                 doBump = true;
-            } else if ((pl.state == Enums.PowerupState.MegaMushroom && !pl.DoesHaveBadge(PlayerController.wonderBadge.Midgit)) || (pl.state == Enums.PowerupState.DrillMushroom && pl.groundpound)) {
-                doBreak = breakableByGiantMario || pl.big;
+            } else if (((pl.state == Enums.PowerupState.MegaMushroom || pl.big) && !pl.DoesHaveBadge(PlayerController.WonderBadge.Midgit)) || (pl.state == Enums.PowerupState.DrillMushroom && pl.groundpound)) {
+                doBreak = breakableByGiantMario;
                 giantBreak = true;
                 doBump = false;
-            } else if ((pl.state >= Enums.PowerupState.Mushroom && !pl.DoesHaveBadge(PlayerController.wonderBadge.Midgit)) || pl.drill) {
+            } else if ((pl.state >= Enums.PowerupState.Mushroom && !pl.DoesHaveBadge(PlayerController.WonderBadge.Midgit)) || pl.drill) {
                 doBreak = breakableByLargeMario || pl.big;
                 doBump = true;
             }
@@ -40,7 +40,7 @@ public class BreakableBrickTile : InteractableTile {
             Break(interacter, worldLocation, giantBreak ? Enums.Sounds.Powerup_MegaMushroom_Break_Block : Enums.Sounds.World_Block_Break);
         return doBreak;
     }
-    public void Break(MonoBehaviour interacter, Vector3 worldLocation, Enums.Sounds sound) {
+    public virtual void Break(MonoBehaviour interacter, Vector3 worldLocation, Enums.Sounds sound) {
         Vector3Int tileLocation = Utils.WorldToTilemapPosition(worldLocation);
 
         //Tilemap

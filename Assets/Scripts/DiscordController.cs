@@ -96,7 +96,7 @@ public class DiscordController : MonoBehaviour {
             assets.LargeText = gm.levelName;
             if (FindObjectOfType<BadgeManager>())
             {
-                if (FindObjectOfType<BadgeManager>().badge1 != PlayerController.wonderBadge.None)
+                if (FindObjectOfType<BadgeManager>().badge1 != PlayerController.WonderBadge.None)
                 {
                     assets.SmallImage = "badge";
                     assets.SmallText = Utils.GetBadgeNames(FindObjectOfType<BadgeManager>().badge1);

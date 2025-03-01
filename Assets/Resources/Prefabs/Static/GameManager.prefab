@@ -5639,11 +5639,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faa509be0aa8ac641ad4ddf6c01d26db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soRetro: 0
+  looseCoinPrefab: Prefabs/LooseCoin
+  coinBlockParticlePrefab: Prefabs/Particle/CoinFromBlock
   wonderPostProcess: {fileID: 2100000, guid: 94408efac1388874cb8afe6899c19dfb, type: 2}
   forceLives: 0
   spawnState: 0
   reccomendedBadge: 6
-  PossibleEffects: 010000000200000004000000030000000500000007000000
+  PossibleEffects: 01000000020000000400000003000000060000000800000005000000
   backfireChance: 10
   WonderOwner: {fileID: 0}
   currentWonderEffect: 0
@@ -5666,6 +5669,7 @@ MonoBehaviour:
   levelUIColor: {r: 0.09411766, g: 0.69803923, b: 0.6666667, a: 1}
   spawnBigPowerups: 1
   spawnVerticalPowerups: 1
+  creditText: 'Level designed by: '
   levelDesigner: 
   richPresenceId: 
   levelName: Unknown

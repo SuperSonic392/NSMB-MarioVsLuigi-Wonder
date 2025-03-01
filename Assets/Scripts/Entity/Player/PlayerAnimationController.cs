@@ -51,7 +51,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
         if (photonView) {
             enableGlow = !photonView.IsMine;
-            if (!photonView.IsMine && !controller.DoesHaveBadge(PlayerController.wonderBadge.Invis))
+            if (!photonView.IsMine && !controller.DoesHaveBadge(PlayerController.WonderBadge.Invis))
                 GameManager.Instance.CreateNametag(controller);
 
             if (controller.character.useColors)
@@ -84,6 +84,11 @@ public class PlayerAnimationController : MonoBehaviourPun {
         {
             animator.speed /= 1.5f;
         }
+        if(controller.pipeEntering && controller.groundpound)
+        {
+            animator.speed *= 2;
+        }
+        animator.speed *= controller.timeScale;
         HandleAnimations();
         animator.SetBool("Bounce", controller.bounce);
         animator.SetBool("A", controller.jumpHeld);
@@ -92,7 +97,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             renderers.AddRange(GetComponentsInChildren<MeshRenderer>(true));
             renderers.AddRange(GetComponentsInChildren<SkinnedMeshRenderer>(true));
         }
-        if(controller.DoesHaveBadge(PlayerController.wonderBadge.Invis))
+        if(controller.DoesHaveBadge(PlayerController.WonderBadge.Invis))
         {
             models.SetActive(false);
         }
@@ -103,7 +108,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
         if (gameover)
             models.SetActive(true);
-        if (controller.DoesHaveBadge(PlayerController.wonderBadge.JetRun) && controller.koyoteTime < 1)
+        if (controller.DoesHaveBadge(PlayerController.WonderBadge.JetRun) && controller.koyoteTime < 1)
         {
             animator.SetFloat("Joystick", 1);
         }
@@ -111,9 +116,9 @@ public class PlayerAnimationController : MonoBehaviourPun {
         {
             animator.SetFloat("Joystick", Mathf.Abs(Mathf.Abs(controller.joystick.x) < controller.analogDeadzone ? 0 : 1));
         }
-        animator.SetFloat("JoyY", Mathf.Lerp(animator.GetFloat("JoyY"), Mathf.Round(controller.joystick.y), Time.deltaTime * 15));
+        animator.SetFloat("JoyY", Mathf.Lerp(animator.GetFloat("JoyY"), Mathf.Round(controller.joystick.y), controller.GetDeltatime() * 15));
         animator.SetBool("Running", controller.running);
-        animator.SetBool("jetrun", !controller.DoesHaveBadge(PlayerController.wonderBadge.JetRun));
+        animator.SetBool("jetrun", !controller.DoesHaveBadge(PlayerController.WonderBadge.JetRun));
         Vector3 targetEuler = models.transform.eulerAngles;
         bool instant = false, changeFacing = false;
         if (!gameover && !controller.Frozen) {
@@ -131,7 +136,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
                 targetEuler = new Vector3(0, controller.facingRight ? 110 : 250, 0);
                 instant = true;
             } else if (animator.GetBool("inShell") && (!controller.onSpinner || Mathf.Abs(body.velocity.x) > 0.3f)) {
-                targetEuler += Mathf.Abs(body.velocity.x) / controller.RunningMaxSpeed * Time.deltaTime * new Vector3(0, 1800 * (controller.facingRight ? -1 : 1));
+                targetEuler += Mathf.Abs(body.velocity.x) / controller.RunningMaxSpeed * controller.GetDeltatime() * new Vector3(0, 1800 * (controller.facingRight ? -1 : 1));
                 instant = true;
             } else if (wasTurnaround || controller.skidding || controller.turnaround || animator.GetCurrentAnimatorStateInfo(0).IsName("turnaround")) {
                 if (controller.facingRight ^ (animator.GetCurrentAnimatorStateInfo(0).IsName("turnaround") || controller.skidding)) {
@@ -142,27 +147,27 @@ public class PlayerAnimationController : MonoBehaviourPun {
                 instant = true;
             } else {
                 if (controller.onSpinner && controller.onGround && Mathf.Abs(body.velocity.x) < 0.3f && !controller.holding) {
-                    targetEuler += new Vector3(0, -1800, 0) * Time.deltaTime;
+                    targetEuler += new Vector3(0, -1800, 0) * controller.GetDeltatime();
                     instant = true;
                     changeFacing = true;
                 } else if (controller.flying || controller.propeller) {
-                    targetEuler += new Vector3(0, -1200 - (controller.propellerTimer * 2000) - (controller.drill ? 800 : 0) + (controller.propeller && controller.propellerSpinTimer <= 0 && body.velocity.y < 0 ? 800 : 0), 0) * Time.deltaTime;
+                    targetEuler += new Vector3(0, -1200 - (controller.propellerTimer * 2000) - (controller.drill ? 800 : 0) + (controller.propeller && controller.propellerSpinTimer <= 0 && body.velocity.y < 0 ? 800 : 0), 0) * controller.GetDeltatime();
                     instant = true;
                 } else {
                     targetEuler = new Vector3(0, controller.facingRight ? 110 : 250, 0);
                 }
             }
-            propellerVelocity = Mathf.Clamp(propellerVelocity + (1800 * ((controller.flying || controller.propeller || controller.usedPropellerThisJump) ? -1 : 1) * Time.deltaTime), -2500, -300);
-            propeller.transform.Rotate(Vector3.forward, propellerVelocity * Time.deltaTime);
+            propellerVelocity = Mathf.Clamp(propellerVelocity + (1800 * ((controller.flying || controller.propeller || controller.usedPropellerThisJump) ? -1 : 1) * controller.GetDeltatime()), -2500, -300);
+            propeller.transform.Rotate(Vector3.forward, propellerVelocity * controller.GetDeltatime());
 
             
-            direction = Mathf.Lerp(direction, controller.facingRight ? 1 : -1, Time.deltaTime * 30);
+            direction = Mathf.Lerp(direction, controller.facingRight ? 1 : -1, controller.GetDeltatime() * 30);
             if(controller.flying || controller.propeller || controller.inShell)
             {
                 if (instant || wasTurnaround || controller.climbing) {
                     models.transform.rotation = Quaternion.Euler(targetEuler);
                 } else {
-                   float maxRotation = 2000f * Time.deltaTime;
+                   float maxRotation = 2000f * controller.GetDeltatime();
                     float x = models.transform.eulerAngles.x, y = models.transform.eulerAngles.y, z = models.transform.eulerAngles.z;
                     x += Mathf.Clamp(targetEuler.x - x, -maxRotation, maxRotation);
                     y += Mathf.Clamp(targetEuler.y - y, -maxRotation, maxRotation);
@@ -203,7 +208,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
         if (controller.dead || animator.GetCurrentAnimatorStateInfo(0).IsName("mini-falling") && !animator.IsInTransition(0) || controller.shockTimer > 0) {
             eyeState = Enums.PlayerEyeState.Death;
         } else {
-            if ((blinkTimer -= Time.fixedDeltaTime) < 0)
+            if ((blinkTimer -= controller.GetFixedDeltatime()) < 0)
                 blinkTimer = 3f + (Random.value * 6f);
             if (blinkTimer < blinkDuration) {
                 eyeState = Enums.PlayerEyeState.HalfBlink;
@@ -243,7 +248,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             {
                 // Only proceed with the logic if clip is not null
                 animationSpeed = animator.GetCurrentAnimatorStateInfo(0).speed;
-                animationTime += (animationSpeed / clip.length) * animator.GetFloat("velocityX") * Time.deltaTime;
+                animationTime += (animationSpeed / clip.length) * animator.GetFloat("velocityX") * controller.GetDeltatime();
 
                 // Ensure animationTime is valid
                 if (float.IsInfinity(animationTime) || float.IsNaN(animationTime))
@@ -256,7 +261,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
         else
         {
             // Handle the case where no clip is available
-            Debug.LogWarning("No animation clip is currently playing on layer 0.");
+            //Debug.LogWarning("No animation clip is currently playing on layer 0.");
         }
 
     }
@@ -277,9 +282,9 @@ public class PlayerAnimationController : MonoBehaviourPun {
 
         animator.SetBool("onLeft", controller.wallSlideLeft);
         animator.SetBool("onRight", controller.wallSlideRight);
-        if(controller.DoesHaveBadge(PlayerController.wonderBadge.JetRun))
+        if(controller.DoesHaveBadge(PlayerController.WonderBadge.JetRun))
         {
-            animator.SetBool("onGround", controller.koyoteTime < 1);
+            animator.SetBool("onGround", controller.koyoteTime < 1 || controller.onGround);
         }
         else
         {
@@ -322,7 +327,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             }
             if(animatedVelocity > 0)
             animatedVelocity = Mathf.Max(1f, animatedVelocity);
-            if(controller.DoesHaveBadge(PlayerController.wonderBadge.JetRun)) {
+            if(controller.DoesHaveBadge(PlayerController.WonderBadge.JetRun)) {
                 animator.SetFloat("velocityX", Mathf.Abs(controller.body.velocity.x));
             }
             else
@@ -400,7 +405,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
         materialBlock.SetVector("ShirtColor", secondaryColor);
         if(controller.mtl)
         {
-            _Metallic += Time.deltaTime;
+            _Metallic += controller.GetDeltatime();
             if(_Metallic > 1)
             {
                 _Metallic = 1;
@@ -408,7 +413,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
         }
         else
         {
-            _Metallic -= Time.deltaTime;
+            _Metallic -= controller.GetDeltatime();
             if (_Metallic < 0)
             {
                 _Metallic = 0;
@@ -489,9 +494,9 @@ public class PlayerAnimationController : MonoBehaviourPun {
             {
                 body.velocity = new Vector2(controller.facingRight ? -3 : 3, 6);
             }
-            deathTimer += Time.fixedDeltaTime;
+            deathTimer += controller.GetFixedDeltatime();
             body.gravityScale = 2f;
-            if (controller.photonView.IsMine && deathTimer + Time.fixedDeltaTime > (3 - 0.43f) && deathTimer < (3 - 0.43f))
+            if (controller.photonView.IsMine && deathTimer + controller.GetFixedDeltatime() > (3 - 0.43f) && deathTimer < (3 - 0.43f))
                 controller.fadeOut.FadeOutAndIn(0.33f, .1f);
 
             if (photonView.IsMine && deathTimer >= 3f)
@@ -505,12 +510,12 @@ public class PlayerAnimationController : MonoBehaviourPun {
             }
             return;
         }
-        deathTimer += Time.fixedDeltaTime;
+        deathTimer += controller.GetFixedDeltatime();
         if (deathTimer < deathUpTime) {
             deathUp = false;
             body.gravityScale = 0;
             body.velocity = Vector2.zero;
-            animator.Play("deadstart");
+            animator.Play(animator.GetBool("firedeath") ? "deadfirestart" : "deadstart");
         } else {
             if (!deathUp && body.position.y > GameManager.Instance.GetLevelMinY()) {
                 body.velocity = new Vector2(0, deathForce);
@@ -524,7 +529,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             body.gravityScale = 1.2f;
             body.velocity = new Vector2(0, Mathf.Max(-deathForce, body.velocity.y));
         }
-        if (controller.photonView.IsMine && deathTimer + Time.fixedDeltaTime > (3 - 0.43f) && deathTimer < (3 - 0.43f))
+        if (controller.photonView.IsMine && deathTimer + controller.GetFixedDeltatime() > (3 - 0.43f) && deathTimer < (3 - 0.43f))
             controller.fadeOut.FadeOutAndIn(0.33f, .1f);
 
         if (photonView.IsMine && deathTimer >= 3f)
@@ -547,7 +552,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             pipeTimer = 0;
             return;
         }
-
+        pipeDuration = (controller.groundpound ? 1 : 2);
         controller.UpdateHitbox();
 
         PipeManager pe = controller.pipeEntering;
@@ -570,7 +575,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
         }
         body.isKinematic = true;
 
-        if (pipeTimer < pipeDuration / 2f && pipeTimer + Time.fixedDeltaTime >= pipeDuration / 2f) {
+        if (pipeTimer < pipeDuration / 2f && pipeTimer + controller.GetFixedDeltatime() >= pipeDuration / 2f) {
             //tp to other pipe
             animator.SetTrigger("PipeOutUp");
             animator.SetBool("PipeOut", true);
@@ -614,6 +619,7 @@ public class PlayerAnimationController : MonoBehaviourPun {
             controller.koyoteTime = 1;
             controller.crouching = false;
             controller.alreadyGroundpounded = true;
+            controller.groundpound = false;
             controller.pipeTimer = 0.25f;
             body.velocity = Vector2.zero;
             transform.position = body.position = new Vector3(pe.otherPipe.transform.position.x, pe.otherPipe.transform.position.y, 1);
@@ -633,12 +639,13 @@ public class PlayerAnimationController : MonoBehaviourPun {
             }
             animator.SetBool("pipeSide", false);
         }
-        pipeTimer += Time.fixedDeltaTime;
+        pipeTimer += controller.GetFixedDeltatime();
     }
 
     public void DisableAllModels() {
         smallModel.SetActive(false);
         largeModel.SetActive(false);
+        kuriboModel.SetActive(false);
         blueShell.SetActive(false);
         propellerHelmet.SetActive(false);
         animator.avatar = smallAvatar;

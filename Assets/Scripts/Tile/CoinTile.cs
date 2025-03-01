@@ -35,7 +35,10 @@ public class CoinTile : BreakableBrickTile {
             }
 
             //Give coin to player
-            player.photonView.RPC(nameof(PlayerController.AttemptCollectCoin), RpcTarget.All, -1, (Vector2) worldLocation + Vector2.one/4f);
+            if (GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.None)
+            {
+                player.photonView.RPC(nameof(PlayerController.AttemptCollectCoin), RpcTarget.All, -1, (Vector2)worldLocation + Vector2.one / 4f);
+            }
         } else {
             interacter.gameObject.GetPhotonView().RPC(nameof(HoldableEntity.PlaySound), RpcTarget.All, Enums.Sounds.World_Coin_Collect);
         }
@@ -45,5 +48,28 @@ public class CoinTile : BreakableBrickTile {
         object[] parametersBump = new object[]{tileLocation.x, tileLocation.y, direction == InteractionDirection.Down, resultTile, "Coin"};
         GameManager.Instance.SendAndExecuteEvent(Enums.NetEventIds.BumpTile, parametersBump, ExitGames.Client.Photon.SendOptions.SendReliable);
         return false;
+    }
+    public override void Break(MonoBehaviour interacter, Vector3 worldLocation, Enums.Sounds sound)
+    {
+        if(interacter is PlayerController player)
+        {
+            if(GameManager.Instance.currentWonderEffect == GameManager.WonderEffect.None)
+            {
+                player.photonView.RPC(nameof(PlayerController.AttemptCollectCoin), RpcTarget.All, -1, (Vector2)worldLocation + Vector2.one / 4f);
+            }
+            GameObject coin = (GameObject)Instantiate(Resources.Load(GameManager.Instance.coinBlockParticlePrefab), worldLocation, Quaternion.identity);
+        }
+        Vector3Int tileLocation = Utils.WorldToTilemapPosition(worldLocation);
+
+        //Tilemap
+        object[] parametersTile = new object[] { tileLocation.x, tileLocation.y, null };
+        GameManager.Instance.SendAndExecuteEvent(Enums.NetEventIds.SetTile, parametersTile, ExitGames.Client.Photon.SendOptions.SendReliable);
+
+        //Particle
+        object[] parametersParticle = new object[] { tileLocation.x, tileLocation.y, "BrickBreak", new Vector3(particleColor.r, particleColor.g, particleColor.b) };
+        GameManager.Instance.SendAndExecuteEvent(Enums.NetEventIds.SpawnParticle, parametersParticle, ExitGames.Client.Photon.SendOptions.SendUnreliable);
+
+        if (interacter is MonoBehaviourPun pun)
+            pun.photonView.RPC("PlaySound", RpcTarget.All, sound);
     }
 }

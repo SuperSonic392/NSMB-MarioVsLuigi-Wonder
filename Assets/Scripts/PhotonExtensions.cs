@@ -34,6 +34,7 @@ public static class PhotonExtensions {
         ["86fb8d86dbb4629b62fc056fa55bf816006874f86d914c52e9d587acfb225f43"] = "Kazik", //frien :3
         ["22c6b4c9b4e625d29206305af805bfdd08656afff46f914867dd35e1b431f439"] = "Grape", 
         ["fb457661def32025bd32df3c1c3ba6bdecb8c4c1230931da4f911b533a05126b"] = "KirbyKid",
+        ["e1ccfcb9f51c9baf0a4668386d72421750368b76fced0b1bf0946588f3dad64d"] = "SHITMAN",
     };
 
     public static bool IsMineOrLocal(this PhotonView view) {

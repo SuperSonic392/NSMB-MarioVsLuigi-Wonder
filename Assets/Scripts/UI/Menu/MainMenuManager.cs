@@ -1280,31 +1280,31 @@ public class MainMenuManager : MonoBehaviour, ILobbyCallbacks, IInRoomCallbacks,
     }
     public void SwapBadge(TMP_Dropdown dropdown)
     {
-        FindObjectOfType<BadgeManager>().badge1 = (PlayerController.wonderBadge)dropdown.value;
+        FindObjectOfType<BadgeManager>().badge1 = (PlayerController.WonderBadge)dropdown.value;
         badgeDropdown2.interactable = true;
-        if (PlayerController.IsBadgeOP((PlayerController.wonderBadge)dropdown.value))
+        if (PlayerController.IsBadgeOP((PlayerController.WonderBadge)dropdown.value))
         {
             OnEquippedOPBadge();
         }
     }
     public void SwapBadge2(TMP_Dropdown dropdown)
     {
-        FindObjectOfType<BadgeManager>().badge2 = (PlayerController.wonderBadge)dropdown.value;
+        FindObjectOfType<BadgeManager>().badge2 = (PlayerController.WonderBadge)dropdown.value;
         badgeDropdown.interactable = true;
-        if (PlayerController.IsBadgeOP((PlayerController.wonderBadge)dropdown.value))
+        if (PlayerController.IsBadgeOP((PlayerController.WonderBadge)dropdown.value))
         {
             OnEquippedOPBadgeSlot2();
         }
     }
     public void OnEquippedOPBadge()
     {
-        FindObjectOfType<BadgeManager>().badge2 = PlayerController.wonderBadge.None;
+        FindObjectOfType<BadgeManager>().badge2 = PlayerController.WonderBadge.None;
         badgeDropdown2.SetValueWithoutNotify(0);
         badgeDropdown2.interactable = false;
     }
     public void OnEquippedOPBadgeSlot2()
     {
-        FindObjectOfType<BadgeManager>().badge1 = PlayerController.wonderBadge.None;
+        FindObjectOfType<BadgeManager>().badge1 = PlayerController.WonderBadge.None;
         badgeDropdown.SetValueWithoutNotify(0);
         badgeDropdown.interactable = false;
     }

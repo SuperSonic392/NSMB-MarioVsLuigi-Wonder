@@ -16,6 +16,10 @@ public class PlayerGhost : MonoBehaviour
     public PlayerController target;
     private void Start() //set fresnel color to player photon id
     {
+        if (!target)
+        {
+            return;
+        }
         foreach (SkinnedMeshRenderer render in GetComponentsInChildren<SkinnedMeshRenderer>())
         {
             foreach (Material mat in render.materials)
@@ -31,15 +35,20 @@ public class PlayerGhost : MonoBehaviour
         {
             return;
         }
-        if(!target.gameObject.activeSelf || target.pipeEntering)
+        if (target.DoesHaveBadge(PlayerController.WonderBadge.JetRun))
+        {
+            delay = 30;
+        }
+        else
+        {
+            delay = 50;
+        }
+        if (!target.gameObject.activeSelf || target.pipeEntering)
         {
             me.speed = 0;
             return;
         }
-        if (target.DoesHaveBadge(PlayerController.wonderBadge.Midgit))
-        {
-            transform.localScale = Vector3.one / 2;
-        }
+        transform.localScale = target.transform.localScale;
         Animator targetAnim = target.gameObject.GetComponent<Animator>();
         poss.Add(target.transform.position);
         rights.Add(target.facingRight);

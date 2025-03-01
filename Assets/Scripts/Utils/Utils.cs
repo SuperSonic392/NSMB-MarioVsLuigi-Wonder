@@ -10,73 +10,73 @@ using Photon.Realtime;
 namespace NSMB.Utils {
     public class Utils {
 
-        public static string GetBadgeNames(PlayerController.wonderBadge badge)
+        public static string GetBadgeNames(PlayerController.WonderBadge badge)
         {
             string ret = string.Empty;
 
             switch (badge)
             {
-                case PlayerController.wonderBadge.None:
+                case PlayerController.WonderBadge.None:
                     ret = "None";
                     break;
-                case PlayerController.wonderBadge.HighJump:
+                case PlayerController.WonderBadge.HighJump:
                     ret = "Floating High Jump";
                     break;
-                case PlayerController.wonderBadge.SpinPlus:
+                case PlayerController.WonderBadge.SpinPlus:
                     ret = "Boosting Spin Jump";
                     break;
-                case PlayerController.wonderBadge.Climb:
+                case PlayerController.WonderBadge.Climb:
                     ret = "Wall-Climb Jump";
                     break;
-                case PlayerController.wonderBadge.SMB2:
+                case PlayerController.WonderBadge.SMB2:
                     ret = "Crouching High Jump";
                     break;
-                case PlayerController.wonderBadge.TimedJump:
+                case PlayerController.WonderBadge.TimedJump:
                     ret = "Timed High Jump";
                     break;
-                case PlayerController.wonderBadge.SuperMushroom:
+                case PlayerController.WonderBadge.SuperMushroom:
                     ret = "Auto Super Mushroom";
                     break;
-                case PlayerController.wonderBadge.JetRun:
+                case PlayerController.WonderBadge.JetRun:
                     ret = "Jet Run";
                     break;
-                case PlayerController.wonderBadge.Invis:
+                case PlayerController.WonderBadge.Invis:
                     ret = "Invisibility";
                     break;
-                case PlayerController.wonderBadge.Magnet:
+                case PlayerController.WonderBadge.Magnet:
                     ret = "Coin Magnet";
                     break;
-                case PlayerController.wonderBadge.AllFirePower:
+                case PlayerController.WonderBadge.AllFirePower:
                     ret = "All Fire Power";
                     break;
-                case PlayerController.wonderBadge.AllIcePower:
+                case PlayerController.WonderBadge.AllIcePower:
                     ret = "All Ice Power";
                     break;
-                case PlayerController.wonderBadge.AllPropellerPower:
+                case PlayerController.WonderBadge.AllPropellerPower:
                     ret = "All Propeller Power";
                     break;
-                case PlayerController.wonderBadge.AllBlueShellPower:
+                case PlayerController.WonderBadge.AllBlueShellPower:
                     ret = "All Shell Power";
                     break;
-                case PlayerController.wonderBadge.AllMiniPower:
+                case PlayerController.WonderBadge.AllMiniPower:
                     ret = "All Mini Power";
                     break;
-                case PlayerController.wonderBadge.AllDrillPower:
+                case PlayerController.WonderBadge.AllDrillPower:
                     ret = "All Drill Power";
                     break;
-                case PlayerController.wonderBadge.GoombaProtection:
+                case PlayerController.WonderBadge.GoombaProtection:
                     ret = "Goomba Protection";
                     break;
-                case PlayerController.wonderBadge.Lightweight:
+                case PlayerController.WonderBadge.Lightweight:
                     ret = "Lightweight Jump";
                     break;
-                case PlayerController.wonderBadge.Midgit:
+                case PlayerController.WonderBadge.Midgit:
                     ret = "Midgit";
                     break;
-                case PlayerController.wonderBadge.Random:
+                case PlayerController.WonderBadge.Random:
                     ret = "Random";
                     break;
-                case PlayerController.wonderBadge.AutoPick:
+                case PlayerController.WonderBadge.AutoPick:
                     ret = "Automatic Choice";
                     break;
                 default:

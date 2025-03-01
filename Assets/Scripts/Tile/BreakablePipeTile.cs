@@ -49,7 +49,7 @@ public class BreakablePipeTile : InteractableTile {
         if (origin.y < (GameManager.Instance.cameraMinY - 9f) || (origin.y + height) >= GameManager.Instance.levelMinTileY + GameManager.Instance.levelHeightTile)
             bottom = true;
 
-        int tileHeight;
+        int tileHeight = 0;
         bool shrink = false;
         bool addHat = true;
 
@@ -149,6 +149,7 @@ public class BreakablePipeTile : InteractableTile {
             height++;
             searchVector += Vector3Int.down;
         }
+        Debug.Log("height: "+ height.ToString());
         return height;
     }
 

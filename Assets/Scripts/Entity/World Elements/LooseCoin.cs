@@ -70,4 +70,10 @@ public class LooseCoin : MonoBehaviourPun {
         Gizmos.color = new Color(1, 0, 0, 0.5f);
         Gizmos.DrawCube(body.position + hitbox.offset, hitbox.size * transform.lossyScale);
     }
+
+    [PunRPC]
+    public void ApplyForce(float forcex, float forcey)
+    {
+        body.velocity += new Vector2(forcex, forcey);
+    }
 }

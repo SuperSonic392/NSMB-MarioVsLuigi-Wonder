@@ -15,7 +15,7 @@ public class LoadingLevelCreator : MonoBehaviour {
         if (!GameManager.Instance || GameManager.Instance.levelDesigner == "")
             return;
 
-        text.text = $"Level designed by: {GameManager.Instance.levelDesigner}"; 
+        text.text = $"{GameManager.Instance.creditText}{GameManager.Instance.levelDesigner}"; 
     }
 
 }

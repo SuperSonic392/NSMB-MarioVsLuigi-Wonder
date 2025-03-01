@@ -146,15 +146,15 @@ public class FrozenCube : HoldableEntity {
         }
 
         body.velocity = new Vector2(throwSpeed * (left ? -1 : 1), body.velocity.y);
-
-        if (autoBreakTimer > 0 && (entity is PlayerController || (!holder && !fastSlide))) {
+        if (autoBreakTimer > 0 && ((entity is PlayerController) || (!holder && !fastSlide))) {
             Utils.TickTimer(ref autoBreakTimer, 0, Time.fixedDeltaTime);
-            if (autoBreakTimer <= 0) {
+            if (autoBreakTimer <= 0 || entityBody.GetComponent<PlayerController>().DoesHaveBadge(PlayerController.WonderBadge.AntiIce)) 
+            {
                 if (!fastSlide)
                     unfreezeReason = IFreezableEntity.UnfreezeReason.Timer;
-
                 if (flying)
                     fallen = true;
+
                 else if (photonView.IsMine) {
                     photonView.RPC(nameof(KillWithReason), RpcTarget.All, (byte) IFreezableEntity.UnfreezeReason.Timer);
                 }

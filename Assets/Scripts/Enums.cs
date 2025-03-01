@@ -46,7 +46,7 @@ public static class Enums {
     //Sound effects
     public enum Sounds : byte {
 
-        //CURRENT MAX: 94
+        //CURRENT MAX: 100
 
         //Enemy
         [SoundData("enemy/freeze")]                             Enemy_Generic_Freeze = 0,
@@ -161,6 +161,12 @@ public static class Enums {
 
         //Wonder Elements
         [SoundData("wonder/flower/collect")]                    Wonder_Flower_Collect = 95,
+
+        //Retro
+        [SoundData("soretro/M1_BigMarioJump")]                  Player_Sound_Jump_Retro_Big = 100,
+        [SoundData("soretro/M1_SmallMarioJump")]                Player_Sound_Jump_Retro_Small = 101,
+        [SoundData("soretro/M1_FireBall")]                      Powerup_Fireball_Shoot_Retro = 102,
+        [SoundData("soretro/M1_Pose")]                          UI_Pause_Retro = 103,
     }
 
     #endregion

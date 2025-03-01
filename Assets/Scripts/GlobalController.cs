@@ -37,6 +37,7 @@ public class GlobalController : Singleton<GlobalController>, IInRoomCallbacks, I
 
     public void Awake()
     {
+        UnityEngine.Random.InitState(System.Environment.TickCount); //ensures the BG is different, I'm tired of the unfinished Chris level BG when the game boots
         if (!InstanceCheck())
             return;
 
